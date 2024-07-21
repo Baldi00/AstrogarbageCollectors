@@ -1,0 +1,84 @@
+#include "SpaceShip.h"
+
+#include "SpaceShipMovementComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "InputTriggers.h"
+
+ASpaceShip::ASpaceShip()
+{
+    PrimaryActorTick.bCanEverTick = true;
+
+    SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
+
+    static FName SphereCollisionProfileName(TEXT("Pawn"));
+    SphereComponent->SetCollisionProfileName(SphereCollisionProfileName);
+
+    RootComponent = SphereComponent;
+
+    MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+
+    static FName MeshCollisionProfileName(TEXT("NoCollision"));
+
+    MeshComponent->SetCollisionProfileName(MeshCollisionProfileName);
+    MeshComponent->SetNotifyRigidBodyCollision(false);
+    MeshComponent->SetGenerateOverlapEvents(false);
+
+    MeshComponent->SetupAttachment(SphereComponent);
+
+    SpringArmComponent = CreateOptionalDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+
+    if (SpringArmComponent != nullptr)
+    {
+        SpringArmComponent->TargetArmLength = 1500.f;
+        SpringArmComponent->SocketOffset = FVector(0.f, 0.f, 600.f);
+        SpringArmComponent->bDoCollisionTest = false;
+        SpringArmComponent->bEnableCameraRotationLag = false;
+        SpringArmComponent->bInheritPitch = false;
+        SpringArmComponent->bInheritYaw = false;
+        SpringArmComponent->bInheritRoll = false;
+
+        SpringArmComponent->SetupAttachment(SphereComponent);
+    }
+
+    CameraComponent = CreateOptionalDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+
+    if (CameraComponent)
+        CameraComponent->SetupAttachment(SpringArmComponent);
+
+    MovementComponent = CreateDefaultSubobject<USpaceShipMovementComponent>(TEXT("Movement"));
+}
+
+void ASpaceShip::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
+        if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+            ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+            Subsystem->AddMappingContext(DefaultMappingContext, 0);
+}
+
+void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(InPlayerInputComponent);
+
+    if (!InPlayerInputComponent)
+        return;
+
+    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InPlayerInputComponent))
+    {
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASpaceShip::Move);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ASpaceShip::Move);
+    }
+}
+
+void ASpaceShip::Move(const FInputActionValue& Value)
+{
+    MovementComponent->Move(Value.Get<FVector2D>());
+}
