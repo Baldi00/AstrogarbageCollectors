@@ -39,6 +39,9 @@ class MOVEMENT_API ASpaceShip : public APawn
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr <UInputAction> MoveAction;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr <UInputAction> LookAction;
+
 public:
     ASpaceShip();
 
@@ -46,4 +49,5 @@ public:
     virtual void SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent) override;
 
     void Move(const FInputActionValue& Value);
+    void Look(const FInputActionValue& Value);
 };

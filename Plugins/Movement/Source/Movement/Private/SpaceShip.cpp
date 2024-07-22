@@ -35,12 +35,13 @@ ASpaceShip::ASpaceShip()
 
     if (SpringArmComponent != nullptr)
     {
-        SpringArmComponent->TargetArmLength = 1500.f;
-        SpringArmComponent->SocketOffset = FVector(0.f, 0.f, 600.f);
+        SpringArmComponent->TargetArmLength = 1600.f;
+        SpringArmComponent->SocketOffset = FVector(0.f, 0.f, 500.f);
         SpringArmComponent->bDoCollisionTest = false;
         SpringArmComponent->bEnableCameraRotationLag = false;
-        SpringArmComponent->bInheritPitch = false;
-        SpringArmComponent->bInheritYaw = false;
+        SpringArmComponent->bUsePawnControlRotation = true;
+        SpringArmComponent->bInheritPitch = true;
+        SpringArmComponent->bInheritYaw = true;
         SpringArmComponent->bInheritRoll = false;
 
         SpringArmComponent->SetupAttachment(SphereComponent);
@@ -52,6 +53,8 @@ ASpaceShip::ASpaceShip()
         CameraComponent->SetupAttachment(SpringArmComponent);
 
     MovementComponent = CreateDefaultSubobject<USpaceShipMovementComponent>(TEXT("Movement"));
+
+    bUseControllerRotationYaw = true;
 }
 
 void ASpaceShip::BeginPlay()
@@ -75,10 +78,17 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
     {
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASpaceShip::Move);
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ASpaceShip::Move);
+
+        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASpaceShip::Look);
     }
 }
 
 void ASpaceShip::Move(const FInputActionValue& Value)
 {
-    MovementComponent->Move(Value.Get<FVector2D>());
+    MovementComponent->Move(Value.Get<FVector>());
+}
+
+void ASpaceShip::Look(const FInputActionValue& Value)
+{
+    MovementComponent->Look(Value.Get<FVector2D>());
 }

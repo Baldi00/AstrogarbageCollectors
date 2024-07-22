@@ -4,6 +4,8 @@
 #include "GameFramework/MovementComponent.h"
 #include "SpaceShipMovementComponent.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
@@ -11,24 +13,38 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float MaxSpeed = 500;
+    float MaxSpeed = 20;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float Acceleration = 1;
+    float Acceleration = 20;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float MaxPitchAngle = 15;
+    float MaxPitchAngle = 4.5f;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float MaxRollAngle = 15;
+    float MaxRollAngle = 7.5f;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float PitchSpeed = 50;
+    float PitchSpeed = 10;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float RollSpeed = 50;
+    float RollSpeed = 20;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    float CameraSocketMaxOffset = 50;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    float CameraSocketOffsetSpeed = 200;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    float ForwardInputSmoothedMaxDuration = 1;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    float ForwardInputSmoothedDecaySpeed = 1;
 
     FVector Velocity = FVector::ZeroVector;
-    FVector2D CurrentMovementVector = FVector2D::ZeroVector;
+    FVector CurrentMovementVector = FVector::ZeroVector;
 
     float TimeToReachMaxSpeedTimer = 0;
+    float DefaultCameraSocketOffset = 500;
 
-    UStaticMeshComponent* SpaceShipMeshComponent;
+    float ForwardInputSmoothedTimer = 0;
+
+    APawn* Owner = nullptr;
+    UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
+    USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
+    UCameraComponent* SpaceShipCameraComponent = nullptr;
 
 public:
     USpaceShipMovementComponent();
@@ -36,7 +52,8 @@ public:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    void Move(const FVector2D& MovementVector) { CurrentMovementVector = MovementVector; }
+    void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
+    void Look(const FVector2D& LookVector);
 
 private:
     void UpdateSpaceShipRotation(float DeltaTime);
