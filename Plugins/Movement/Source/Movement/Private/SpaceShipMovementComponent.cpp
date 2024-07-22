@@ -30,11 +30,21 @@ void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    if (CurrentMovementVector.Y > 0)
-        ForwardInputSmoothedTimer = FMath::Min(ForwardInputSmoothedMaxDuration, ForwardInputSmoothedTimer + DeltaTime);
-    else
-        ForwardInputSmoothedTimer = FMath::Max(0, ForwardInputSmoothedTimer - DeltaTime * ForwardInputSmoothedDecaySpeed);
+    UpdateVelocity(DeltaTime);
+    UpdateMovementEffects(DeltaTime);
+}
 
+void USpaceShipMovementComponent::Look(const FVector2D& LookVector)
+{
+    if (Owner->Controller != nullptr)
+    {
+        Owner->AddControllerYawInput(LookVector.X);
+        Owner->AddControllerPitchInput(LookVector.Y);
+    }
+}
+
+void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
+{
     if (CurrentMovementVector != FVector::ZeroVector)
     {
         FVector Movement = FVector::ZeroVector;
@@ -48,38 +58,17 @@ void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick
     }
 
     Owner->AddActorWorldOffset(Velocity);
-
-    UpdateSpaceShipRotation(DeltaTime);
-
-    // UPDATE CAMERA SOCKET OFFSET
-    FVector SocketOffset = SpaceShipSpringArmComponent->SocketOffset;
-
-    if (CurrentMovementVector.Z != 0)
-        SocketOffset.Z = FMath::Clamp(SocketOffset.Z - CurrentMovementVector.Z * CameraSocketOffsetSpeed * DeltaTime,
-            DefaultCameraSocketOffset - CameraSocketMaxOffset, DefaultCameraSocketOffset + CameraSocketMaxOffset);
-    else if (SocketOffset.Z > DefaultCameraSocketOffset)
-        SocketOffset.Z = FMath::Max(DefaultCameraSocketOffset, SocketOffset.Z - CameraSocketOffsetSpeed * DeltaTime);
-    else if (SocketOffset.Z < DefaultCameraSocketOffset)
-        SocketOffset.Z = FMath::Min(DefaultCameraSocketOffset, SocketOffset.Z + CameraSocketOffsetSpeed * DeltaTime);
-
-    SpaceShipSpringArmComponent->SocketOffset = SocketOffset;
-    /////
-
-    // UPDATE CAMERA FOV
-    
-    SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 120.f, (Velocity.Length() * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
-
-    /////
-
 }
 
-void USpaceShipMovementComponent::Look(const FVector2D& LookVector)
+void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)
 {
-    if (Owner->Controller != nullptr)
-    {
-        Owner->AddControllerYawInput(LookVector.X);
-        Owner->AddControllerPitchInput(LookVector.Y);
-    }
+    UpdateSpaceShipRotation(DeltaTime);
+    UpdateCameraSocketOffset(DeltaTime);
+    UpdateForwardInputSmoothedTimer(DeltaTime);
+
+    // Update Camera Field of View
+    SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 120.f,
+        (Velocity.Length() * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
 }
 
 void USpaceShipMovementComponent::UpdateSpaceShipRotation(float DeltaTime)
@@ -108,4 +97,27 @@ void USpaceShipMovementComponent::UpdateSpaceShipRotation(float DeltaTime)
         NextRotation.Pitch = FMath::Min(0, NextRotation.Pitch + PitchSpeed * DeltaTime);
 
     SpaceShipMeshComponent->SetRelativeRotation(NextRotation);
+}
+
+void USpaceShipMovementComponent::UpdateCameraSocketOffset(float DeltaTime)
+{
+    FVector SocketOffset = SpaceShipSpringArmComponent->SocketOffset;
+
+    if (CurrentMovementVector.Z != 0)
+        SocketOffset.Z = FMath::Clamp(SocketOffset.Z - CurrentMovementVector.Z * CameraSocketOffsetSpeed * DeltaTime,
+            DefaultCameraSocketOffset - CameraSocketMaxOffset, DefaultCameraSocketOffset + CameraSocketMaxOffset);
+    else if (SocketOffset.Z > DefaultCameraSocketOffset)
+        SocketOffset.Z = FMath::Max(DefaultCameraSocketOffset, SocketOffset.Z - CameraSocketOffsetSpeed * DeltaTime);
+    else if (SocketOffset.Z < DefaultCameraSocketOffset)
+        SocketOffset.Z = FMath::Min(DefaultCameraSocketOffset, SocketOffset.Z + CameraSocketOffsetSpeed * DeltaTime);
+
+    SpaceShipSpringArmComponent->SocketOffset = SocketOffset;
+}
+
+void USpaceShipMovementComponent::UpdateForwardInputSmoothedTimer(float DeltaTime)
+{
+    if (CurrentMovementVector.Y > 0)
+        ForwardInputSmoothedTimer = FMath::Min(ForwardInputSmoothedMaxDuration, ForwardInputSmoothedTimer + DeltaTime);
+    else
+        ForwardInputSmoothedTimer = FMath::Max(0, ForwardInputSmoothedTimer - DeltaTime * ForwardInputSmoothedDecaySpeed);
 }

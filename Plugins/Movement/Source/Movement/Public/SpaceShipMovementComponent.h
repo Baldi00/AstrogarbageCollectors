@@ -16,21 +16,24 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     float MaxSpeed = 20;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     float Acceleration = 20;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float MaxPitchAngle = 4.5f;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float MaxRollAngle = 7.5f;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float PitchSpeed = 10;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float RollSpeed = 20;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float CameraSocketMaxOffset = 50;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float CameraSocketOffsetSpeed = 200;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float ForwardInputSmoothedMaxDuration = 1;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float ForwardInputSmoothedDecaySpeed = 1;
 
     FVector Velocity = FVector::ZeroVector;
@@ -56,5 +59,9 @@ public:
     void Look(const FVector2D& LookVector);
 
 private:
+    void UpdateVelocity(float DeltaTime);
+    void UpdateMovementEffects(float DeltaTime);
     void UpdateSpaceShipRotation(float DeltaTime);
+    void UpdateCameraSocketOffset(float DeltaTime);
+    void UpdateForwardInputSmoothedTimer(float DeltaTime);
 };
