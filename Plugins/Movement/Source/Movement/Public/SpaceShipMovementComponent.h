@@ -40,12 +40,14 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     FVector SpaceShipVelocity = FVector::ZeroVector;
+
+    UPROPERTY(Replicated)
     FVector CurrentMovementVector = FVector::ZeroVector;
 
     float TimeToReachMaxSpeedTimer = 0;
     float DefaultCameraSocketOffset = 500;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"), Replicated)
     float ForwardInputSmoothedTimer = 0;
 
     bool bDecreaseVelocity = false;
@@ -71,7 +73,11 @@ public:
 private:
     void UpdateVelocity(float DeltaTime);
     void UpdateMovementEffects(float DeltaTime);
+    void UpdateFireRockets();
     void UpdateSpaceShipRotation(float DeltaTime);
     void UpdateCameraSocketOffset(float DeltaTime);
     void UpdateForwardInputSmoothedTimer(float DeltaTime);
+
+protected:
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

@@ -3,10 +3,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "NiagaraComponent.h"
+#include "Net/UnrealNetwork.h"
 
 USpaceShipMovementComponent::USpaceShipMovementComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
+    SetIsReplicatedByDefault(true);
 }
 
 void USpaceShipMovementComponent::BeginPlay()
@@ -58,22 +60,25 @@ void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
 
 void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
 {
-    if (CurrentMovementVector != FVector::ZeroVector)
+    if (Owner->HasAuthority() || Owner->IsLocallyControlled())
     {
-        FVector Movement = FVector::ZeroVector;
-        Movement += CurrentMovementVector.X * Owner->GetActorRightVector();
-        Movement += CurrentMovementVector.Y * Owner->GetActorForwardVector();
-        Movement += CurrentMovementVector.Z * Owner->GetActorUpVector();
-        SpaceShipVelocity += DeltaTime * Acceleration * Movement;
+        if (CurrentMovementVector != FVector::ZeroVector)
+        {
+            FVector Movement = FVector::ZeroVector;
+            Movement += CurrentMovementVector.X * Owner->GetActorRightVector();
+            Movement += CurrentMovementVector.Y * Owner->GetActorForwardVector();
+            Movement += CurrentMovementVector.Z * Owner->GetActorUpVector();
+            SpaceShipVelocity += DeltaTime * Acceleration * Movement;
 
-        if (SpaceShipVelocity.SquaredLength() > MaxSpeed * MaxSpeed)
-            SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * MaxSpeed;
+            if (SpaceShipVelocity.SquaredLength() > MaxSpeed * MaxSpeed)
+                SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * MaxSpeed;
+        }
+
+        if (bDecreaseVelocity)
+            SpaceShipVelocity = FMath::VInterpTo(SpaceShipVelocity, FVector::ZeroVector, DeltaTime, 1);
+
+        Owner->AddActorWorldOffset(SpaceShipVelocity);
     }
-
-    if (bDecreaseVelocity)
-        SpaceShipVelocity = FMath::VInterpTo(SpaceShipVelocity, FVector::ZeroVector, DeltaTime, 1);
-
-    Owner->AddActorWorldOffset(SpaceShipVelocity);
 
     if (Owner->HasAuthority())
         Owner->UpdateReplicatedActorLocation();
@@ -81,29 +86,18 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
 
 void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)
 {
-    float VelocityMagnitude = SpaceShipVelocity.Length();
-
     UpdateSpaceShipRotation(DeltaTime);
-    UpdateCameraSocketOffset(DeltaTime);
     UpdateForwardInputSmoothedTimer(DeltaTime);
+    UpdateFireRockets();
 
-    float CurrentFireRocketsLength = FMath::Lerp(0.f, 600.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+    if (Owner->IsLocallyControlled())
+    {
+        UpdateCameraSocketOffset(DeltaTime);
 
-    float CurrentFireRockets1Scale = FMath::Lerp(60.f, 90.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
-
-    float CurrentFireRockets23Scale = FMath::Lerp(20.f, 50.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
-
-    FireRocketComponent1->SetFloatParameter("Length", CurrentFireRocketsLength);
-    FireRocketComponent2->SetFloatParameter("Length", CurrentFireRocketsLength * 0.75f);
-    FireRocketComponent3->SetFloatParameter("Length", CurrentFireRocketsLength * 0.75f);
-
-    FireRocketComponent1->SetFloatParameter("Scale", CurrentFireRockets1Scale);
-    FireRocketComponent2->SetFloatParameter("Scale", CurrentFireRockets23Scale);
-    FireRocketComponent3->SetFloatParameter("Scale", CurrentFireRockets23Scale);
-
-    // Update Camera Field of View
-    SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 120.f,
-        (VelocityMagnitude * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
+        // Update Camera Field of View
+        SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 120.f,
+            (SpaceShipVelocity.Length() * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
+    }
 }
 
 void USpaceShipMovementComponent::UpdateSpaceShipRotation(float DeltaTime)
@@ -155,4 +149,26 @@ void USpaceShipMovementComponent::UpdateForwardInputSmoothedTimer(float DeltaTim
         ForwardInputSmoothedTimer = FMath::Min(ForwardInputSmoothedMaxDuration, ForwardInputSmoothedTimer + DeltaTime);
     else
         ForwardInputSmoothedTimer = FMath::Max(0, ForwardInputSmoothedTimer - DeltaTime * ForwardInputSmoothedDecaySpeed);
+}
+
+void USpaceShipMovementComponent::UpdateFireRockets()
+{
+    float CurrentFireRocketsLength = FMath::Lerp(0.f, 600.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+    float CurrentFireRockets1Scale = FMath::Lerp(60.f, 90.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+    float CurrentFireRockets23Scale = FMath::Lerp(20.f, 50.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+
+    FireRocketComponent1->SetFloatParameter("Length", CurrentFireRocketsLength);
+    FireRocketComponent2->SetFloatParameter("Length", CurrentFireRocketsLength * 0.75f);
+    FireRocketComponent3->SetFloatParameter("Length", CurrentFireRocketsLength * 0.75f);
+
+    FireRocketComponent1->SetFloatParameter("Scale", CurrentFireRockets1Scale);
+    FireRocketComponent2->SetFloatParameter("Scale", CurrentFireRockets23Scale);
+    FireRocketComponent3->SetFloatParameter("Scale", CurrentFireRockets23Scale);
+}
+
+void USpaceShipMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(USpaceShipMovementComponent, CurrentMovementVector);
+    DOREPLIFETIME(USpaceShipMovementComponent, ForwardInputSmoothedTimer);
 }
