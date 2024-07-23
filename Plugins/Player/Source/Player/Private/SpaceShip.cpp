@@ -1,6 +1,8 @@
 #include "SpaceShip.h"
 
 #include "SpaceShipMovementComponent.h"
+#include "SpaceShipShootingComponent.h"
+#include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/InputComponent.h"
@@ -55,6 +57,7 @@ ASpaceShip::ASpaceShip()
         CameraComponent->SetupAttachment(SpringArmComponent);
 
     MovementComponent = CreateDefaultSubobject<USpaceShipMovementComponent>(TEXT("Movement"));
+    ShootingComponent = CreateDefaultSubobject<USpaceShipShootingComponent>(TEXT("Shooting"));
 
     bUseControllerRotationYaw = false;
 
@@ -65,6 +68,14 @@ ASpaceShip::ASpaceShip()
     FireRocketComponent1->SetupAttachment(MeshComponent);
     FireRocketComponent2->SetupAttachment(MeshComponent);
     FireRocketComponent3->SetupAttachment(MeshComponent);
+
+    LeftLaserRaySceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("LeftLaserRaySceneComponent"));
+    RightLaserRaySceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RightLaserRaySceneComponent"));
+    CentralDestroyDecomposerSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CentralDestroyDecomposerSceneComponent"));
+
+    LeftLaserRaySceneComponent->SetupAttachment(MeshComponent);
+    RightLaserRaySceneComponent->SetupAttachment(MeshComponent);
+    CentralDestroyDecomposerSceneComponent->SetupAttachment(MeshComponent);
 
     SetReplicateMovement(false);
 }
@@ -81,6 +92,8 @@ void ASpaceShip::BeginPlay()
     FireRocketComponent1->SetFloatParameter("Scale", 60);
     FireRocketComponent2->SetFloatParameter("Scale", 20);
     FireRocketComponent3->SetFloatParameter("Scale", 20);
+
+    ShootingComponent->SetShootingSceneComponents(LeftLaserRaySceneComponent, CentralDestroyDecomposerSceneComponent, RightLaserRaySceneComponent);
 }
 
 void ASpaceShip::Tick(float DeltaTime)
@@ -110,6 +123,9 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
 
         EnhancedInputComponent->BindAction(StopAction, ETriggerEvent::Triggered, this, &ASpaceShip::DecreaseVelocity);
         EnhancedInputComponent->BindAction(StopAction, ETriggerEvent::Completed, this, &ASpaceShip::DecreaseVelocity);
+
+        EnhancedInputComponent->BindAction(ShootLaserRaysAction, ETriggerEvent::Started, this, &ASpaceShip::ShootLaserRays);
+        EnhancedInputComponent->BindAction(ShootDestroyDecomposerAction, ETriggerEvent::Completed, this, &ASpaceShip::ShootDestroyDecomposer);
     }
 }
 
@@ -143,6 +159,22 @@ void ASpaceShip::DecreaseVelocity(const FInputActionValue& Value)
         Server_DecreaseVelocity(Value.Get<bool>());
 }
 
+void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
+{
+    if (HasAuthority())
+        ShootingComponent->ShootLaserRays();
+    else
+        Server_ShootLaserRays();
+}
+
+void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
+{
+    if (HasAuthority())
+        ShootingComponent->ShootDestroyDecomposer();
+    else
+        Server_ShootDestroyDecomposer();
+}
+
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
 {
     MovementComponent->Move(MovementVector);
@@ -156,6 +188,16 @@ void ASpaceShip::Server_Look_Implementation(FVector2D LookVector)
 void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity)
 {
     MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
+}
+
+void ASpaceShip::Server_ShootLaserRays_Implementation()
+{
+    ShootingComponent->ShootLaserRays();
+}
+
+void ASpaceShip::Server_ShootDestroyDecomposer_Implementation()
+{
+    ShootingComponent->ShootDestroyDecomposer();
 }
 
 void ASpaceShip::OnRep_ActorLocation()

@@ -9,7 +9,9 @@ class UStaticMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class USpaceShipMovementComponent;
+class USpaceShipShootingComponent;
 class UNiagaraComponent;
+class USceneComponent;
 
 class UInputMappingContext;
 class UInputAction;
@@ -36,6 +38,9 @@ class PLAYER_API ASpaceShip : public APawn
     TObjectPtr<USpaceShipMovementComponent> MovementComponent;
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USpaceShipShootingComponent> ShootingComponent;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UNiagaraComponent> FireRocketComponent1;
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -43,6 +48,15 @@ class PLAYER_API ASpaceShip : public APawn
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UNiagaraComponent> FireRocketComponent3;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USceneComponent> LeftLaserRaySceneComponent;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USceneComponent> RightLaserRaySceneComponent;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USceneComponent> CentralDestroyDecomposerSceneComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     UInputMappingContext* DefaultMappingContext;
@@ -55,6 +69,12 @@ class PLAYER_API ASpaceShip : public APawn
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr <UInputAction> StopAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr <UInputAction> ShootLaserRaysAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr <UInputAction> ShootDestroyDecomposerAction;
 
     UPROPERTY(ReplicatedUsing = "OnRep_ActorLocation");
     FVector ActorLocation;
@@ -71,6 +91,8 @@ public:
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
     void DecreaseVelocity(const FInputActionValue& Value);
+    void ShootLaserRays(const FInputActionValue& Value);
+    void ShootDestroyDecomposer(const FInputActionValue& Value);
 
     UFUNCTION(Server, Unreliable)
     void Server_Move(FVector MovementVector);
@@ -78,6 +100,10 @@ public:
     void Server_Look(FVector2D LookVector);
     UFUNCTION(Server, Unreliable)
     void Server_DecreaseVelocity(bool bInDecreaseVelocity);
+    UFUNCTION(Server, Reliable)
+    void Server_ShootLaserRays();
+    UFUNCTION(Server, Reliable)
+    void Server_ShootDestroyDecomposer();
 
 protected:
     UFUNCTION()
