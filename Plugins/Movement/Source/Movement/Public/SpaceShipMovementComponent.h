@@ -4,6 +4,7 @@
 #include "GameFramework/MovementComponent.h"
 #include "SpaceShipMovementComponent.generated.h"
 
+class ASpaceShip;
 class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraComponent;
@@ -37,7 +38,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float ForwardInputSmoothedDecaySpeed = 1;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     FVector SpaceShipVelocity = FVector::ZeroVector;
     FVector CurrentMovementVector = FVector::ZeroVector;
 
@@ -49,7 +50,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
 
     bool bDecreaseVelocity = false;
 
-    APawn* Owner = nullptr;
+    ASpaceShip* Owner = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
     USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
     UCameraComponent* SpaceShipCameraComponent = nullptr;
@@ -64,7 +65,7 @@ public:
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
-    void Look(const FVector2D& LookVector);
+    void Rotate(const FVector2D& LookVector);
     void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
 
 private:

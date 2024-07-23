@@ -1,4 +1,5 @@
 #include "SpaceShipMovementComponent.h"
+#include "SpaceShip.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "NiagaraComponent.h"
@@ -12,7 +13,7 @@ void USpaceShipMovementComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Owner = Cast<APawn>(GetOwner());
+    Owner = Cast<ASpaceShip>(GetOwner());
     ensureMsgf(Owner != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Owning actor isn't of type APawn"));
 
     SpaceShipMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
@@ -47,13 +48,12 @@ void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick
     UpdateMovementEffects(DeltaTime);
 }
 
-void USpaceShipMovementComponent::Look(const FVector2D& LookVector)
+void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
 {
-    if (Owner->Controller != nullptr)
-    {
-        Owner->AddControllerYawInput(LookVector.X);
-        Owner->AddControllerPitchInput(LookVector.Y);
-    }
+    Owner->AddActorWorldRotation(FRotator(0, LookVector.X, 0));
+
+    if (Owner->HasAuthority())
+        Owner->UpdateReplicatedActorRotation();
 }
 
 void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
@@ -74,6 +74,9 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
         SpaceShipVelocity = FMath::VInterpTo(SpaceShipVelocity, FVector::ZeroVector, DeltaTime, 1);
 
     Owner->AddActorWorldOffset(SpaceShipVelocity);
+
+    if (Owner->HasAuthority())
+        Owner->UpdateReplicatedActorLocation();
 }
 
 void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)

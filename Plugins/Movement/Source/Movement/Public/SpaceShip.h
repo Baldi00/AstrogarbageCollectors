@@ -56,6 +56,11 @@ class MOVEMENT_API ASpaceShip : public APawn
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr <UInputAction> StopAction;
 
+    UPROPERTY(ReplicatedUsing = "OnRep_ActorLocation");
+    FVector ActorLocation;
+    UPROPERTY(ReplicatedUsing = "OnRep_ActorRotation");
+    FRotator ActorRotation;
+
 public:
     ASpaceShip();
 
@@ -65,4 +70,22 @@ public:
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
     void DecreaseVelocity(const FInputActionValue& Value);
+
+    UFUNCTION(Server, Unreliable)
+    void Server_Move(FVector MovementVector);
+    UFUNCTION(Server, Unreliable)
+    void Server_Look(FVector2D LookVector);
+    UFUNCTION(Server, Unreliable)
+    void Server_DecreaseVelocity(bool bInDecreaseVelocity);
+
+    void UpdateReplicatedActorLocation();
+    void UpdateReplicatedActorRotation();
+
+protected:
+    UFUNCTION()
+    void OnRep_ActorLocation();
+    UFUNCTION()
+    void OnRep_ActorRotation();
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

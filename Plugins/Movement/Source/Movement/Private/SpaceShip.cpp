@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputTriggers.h"
 #include "NiagaraComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ASpaceShip::ASpaceShip()
 {
@@ -40,9 +41,9 @@ ASpaceShip::ASpaceShip()
         SpringArmComponent->SocketOffset = FVector(0.f, 0.f, 500.f);
         SpringArmComponent->bDoCollisionTest = false;
         SpringArmComponent->bEnableCameraRotationLag = false;
-        SpringArmComponent->bUsePawnControlRotation = true;
-        SpringArmComponent->bInheritPitch = true;
-        SpringArmComponent->bInheritYaw = true;
+        SpringArmComponent->bUsePawnControlRotation = false;
+        SpringArmComponent->bInheritPitch = false;
+        SpringArmComponent->bInheritYaw = false;
         SpringArmComponent->bInheritRoll = false;
 
         SpringArmComponent->SetupAttachment(SphereComponent);
@@ -55,7 +56,7 @@ ASpaceShip::ASpaceShip()
 
     MovementComponent = CreateDefaultSubobject<USpaceShipMovementComponent>(TEXT("Movement"));
 
-    bUseControllerRotationYaw = true;
+    bUseControllerRotationYaw = false;
 
     FireRocketComponent1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FireRocketComponent1"));
     FireRocketComponent2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FireRocketComponent2"));
@@ -64,6 +65,8 @@ ASpaceShip::ASpaceShip()
     FireRocketComponent1->SetupAttachment(MeshComponent);
     FireRocketComponent2->SetupAttachment(MeshComponent);
     FireRocketComponent3->SetupAttachment(MeshComponent);
+
+    SetReplicateMovement(false);
 }
 
 void ASpaceShip::BeginPlay()
@@ -102,14 +105,73 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
 void ASpaceShip::Move(const FInputActionValue& Value)
 {
     MovementComponent->Move(Value.Get<FVector>());
+    if (!HasAuthority())
+        Server_Move(Value.Get<FVector>());
 }
 
 void ASpaceShip::Look(const FInputActionValue& Value)
 {
-    MovementComponent->Look(Value.Get<FVector2D>());
+    MovementComponent->Rotate(Value.Get<FVector2D>());
+    if (!HasAuthority())
+        Server_Look(Value.Get<FVector2D>());
+
+    if (IsLocallyControlled())
+    {
+        FRotator SpringArmRotation = SpringArmComponent->GetRelativeRotation();
+        SpringArmRotation.Add(-Value.Get<FVector2D>().Y, Value.Get<FVector2D>().X, 0);
+        SpringArmRotation.Pitch = FMath::Clamp(SpringArmRotation.Pitch, -45.f, 45.f);
+        SpringArmRotation.Roll = 0;
+        SpringArmComponent->SetRelativeRotation(SpringArmRotation);
+    }
 }
 
 void ASpaceShip::DecreaseVelocity(const FInputActionValue& Value)
 {
     MovementComponent->DecreaseVelocity(Value.Get<bool>());
+    if (!HasAuthority())
+        Server_DecreaseVelocity(Value.Get<bool>());
+}
+
+void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
+{
+    MovementComponent->Move(MovementVector);
+}
+
+void ASpaceShip::Server_Look_Implementation(FVector2D LookVector)
+{
+    MovementComponent->Rotate(LookVector);
+}
+
+void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity)
+{
+    MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
+}
+
+void ASpaceShip::UpdateReplicatedActorLocation()
+{
+    ActorLocation = GetActorLocation();
+}
+
+void ASpaceShip::UpdateReplicatedActorRotation()
+{
+    ActorRotation = GetActorRotation();
+}
+
+void ASpaceShip::OnRep_ActorLocation()
+{
+    if (!HasAuthority() && (!IsLocallyControlled() || FVector::DistSquared(GetActorLocation(), ActorLocation) > 10000))
+        SetActorLocation(ActorLocation);
+}
+
+void ASpaceShip::OnRep_ActorRotation()
+{
+    if (!HasAuthority() && !IsLocallyControlled())
+        SetActorRotation(ActorRotation);
+}
+
+void ASpaceShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorLocation, COND_None, REPNOTIFY_OnChanged);
+    DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorRotation, COND_None, REPNOTIFY_OnChanged);
 }
