@@ -1,5 +1,4 @@
 #include "SpaceShipMovementComponent.h"
-#include "SpaceShip.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "NiagaraComponent.h"
@@ -15,7 +14,7 @@ void USpaceShipMovementComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Owner = Cast<ASpaceShip>(GetOwner());
+    Owner = Cast<APawn>(GetOwner());
     ensureMsgf(Owner != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Owning actor isn't of type APawn"));
 
     SpaceShipMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
@@ -53,9 +52,6 @@ void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick
 void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
 {
     Owner->AddActorWorldRotation(FRotator(0, LookVector.X, 0));
-
-    if (Owner->HasAuthority())
-        Owner->UpdateReplicatedActorRotation();
 }
 
 void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
@@ -79,9 +75,6 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
 
         Owner->AddActorWorldOffset(SpaceShipVelocity);
     }
-
-    if (Owner->HasAuthority())
-        Owner->UpdateReplicatedActorLocation();
 }
 
 void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)

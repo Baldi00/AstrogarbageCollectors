@@ -16,7 +16,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class MOVEMENT_API ASpaceShip : public APawn
+class PLAYER_API ASpaceShip : public APawn
 {
     GENERATED_BODY()
 
@@ -65,6 +65,7 @@ public:
     ASpaceShip();
 
     virtual void BeginPlay() override;
+    virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent) override;
 
     void Move(const FInputActionValue& Value);
@@ -77,9 +78,6 @@ public:
     void Server_Look(FVector2D LookVector);
     UFUNCTION(Server, Unreliable)
     void Server_DecreaseVelocity(bool bInDecreaseVelocity);
-
-    void UpdateReplicatedActorLocation();
-    void UpdateReplicatedActorRotation();
 
 protected:
     UFUNCTION()

@@ -83,6 +83,17 @@ void ASpaceShip::BeginPlay()
     FireRocketComponent3->SetFloatParameter("Scale", 20);
 }
 
+void ASpaceShip::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (HasAuthority())
+    {
+        ActorLocation = GetActorLocation();
+        ActorRotation = GetActorRotation();
+    }
+}
+
 void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(InPlayerInputComponent);
@@ -145,16 +156,6 @@ void ASpaceShip::Server_Look_Implementation(FVector2D LookVector)
 void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity)
 {
     MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
-}
-
-void ASpaceShip::UpdateReplicatedActorLocation()
-{
-    ActorLocation = GetActorLocation();
-}
-
-void ASpaceShip::UpdateReplicatedActorRotation()
-{
-    ActorRotation = GetActorRotation();
 }
 
 void ASpaceShip::OnRep_ActorLocation()

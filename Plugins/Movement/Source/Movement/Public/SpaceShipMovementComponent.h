@@ -4,7 +4,6 @@
 #include "GameFramework/MovementComponent.h"
 #include "SpaceShipMovementComponent.generated.h"
 
-class ASpaceShip;
 class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraComponent;
@@ -15,7 +14,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float MaxSpeed = 20;
+    float MaxSpeed = 50;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     float Acceleration = 20;
 
@@ -28,15 +27,15 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float RollSpeed = 20;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
-    float CameraSocketMaxOffset = 50;
+    float CameraSocketMaxOffset = 75;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float CameraSocketOffsetSpeed = 200;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
-    float ForwardInputSmoothedMaxDuration = 1;
+    float ForwardInputSmoothedMaxDuration = 3;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
-    float ForwardInputSmoothedDecaySpeed = 1;
+    float ForwardInputSmoothedDecaySpeed = 3;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     FVector SpaceShipVelocity = FVector::ZeroVector;
@@ -52,7 +51,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
 
     bool bDecreaseVelocity = false;
 
-    ASpaceShip* Owner = nullptr;
+    APawn* Owner = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
     USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
     UCameraComponent* SpaceShipCameraComponent = nullptr;
