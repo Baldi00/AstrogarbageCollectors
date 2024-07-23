@@ -14,7 +14,7 @@ public class Movement : ModuleRules
 		
         PublicDependencyModuleNames.AddRange(new string[] { "Core" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Niagara" });
 
         DynamicallyLoadedModuleNames.AddRange(new string[] { });
 	}

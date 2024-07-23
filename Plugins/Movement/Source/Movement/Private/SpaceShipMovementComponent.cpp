@@ -1,6 +1,7 @@
 #include "SpaceShipMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "NiagaraComponent.h"
 
 USpaceShipMovementComponent::USpaceShipMovementComponent()
 {
@@ -22,6 +23,18 @@ void USpaceShipMovementComponent::BeginPlay()
 
     SpaceShipCameraComponent = GetOwner()->GetComponentByClass<UCameraComponent>();
     ensureMsgf(SpaceShipCameraComponent != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Unable to find Camera Component on owning Actor"));
+
+    TSet<UActorComponent*> Components = GetOwner()->GetComponents();
+    int Index = 0;
+    for (UActorComponent* Component : Components)
+        if (UNiagaraComponent* NiagaraComponent = Cast<UNiagaraComponent>(Component))
+            switch (Index)
+            {
+            case 0: FireRocketComponent1 = NiagaraComponent; Index++; break;
+            case 1: FireRocketComponent2 = NiagaraComponent; Index++; break;
+            case 2: FireRocketComponent3 = NiagaraComponent; Index++; break;
+            default: break;
+            }
 
     DefaultCameraSocketOffset = SpaceShipSpringArmComponent->SocketOffset.Z;
 }
@@ -51,24 +64,40 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
         Movement += CurrentMovementVector.X * Owner->GetActorRightVector();
         Movement += CurrentMovementVector.Y * Owner->GetActorForwardVector();
         Movement += CurrentMovementVector.Z * Owner->GetActorUpVector();
-        Velocity += DeltaTime * Acceleration * Movement;
+        SpaceShipVelocity += DeltaTime * Acceleration * Movement;
 
-        if (Velocity.SquaredLength() > MaxSpeed * MaxSpeed)
-            Velocity = Velocity.GetSafeNormal() * MaxSpeed;
+        if (SpaceShipVelocity.SquaredLength() > MaxSpeed * MaxSpeed)
+            SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * MaxSpeed;
     }
 
-    Owner->AddActorWorldOffset(Velocity);
+    Owner->AddActorWorldOffset(SpaceShipVelocity);
 }
 
 void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)
 {
+    float VelocityMagnitude = SpaceShipVelocity.Length();
+
     UpdateSpaceShipRotation(DeltaTime);
     UpdateCameraSocketOffset(DeltaTime);
     UpdateForwardInputSmoothedTimer(DeltaTime);
 
+    float CurrentFireRocketsLength = FMath::Lerp(0.f, 600.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+
+    float CurrentFireRockets1Scale = FMath::Lerp(60.f, 90.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+
+    float CurrentFireRockets23Scale = FMath::Lerp(20.f, 50.f, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+
+    FireRocketComponent1->SetFloatParameter("Length", CurrentFireRocketsLength);
+    FireRocketComponent2->SetFloatParameter("Length", CurrentFireRocketsLength * 0.75f);
+    FireRocketComponent3->SetFloatParameter("Length", CurrentFireRocketsLength * 0.75f);
+
+    FireRocketComponent1->SetFloatParameter("Scale", CurrentFireRockets1Scale);
+    FireRocketComponent2->SetFloatParameter("Scale", CurrentFireRockets23Scale);
+    FireRocketComponent3->SetFloatParameter("Scale", CurrentFireRockets23Scale);
+
     // Update Camera Field of View
     SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 120.f,
-        (Velocity.Length() * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
+        (VelocityMagnitude * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
 }
 
 void USpaceShipMovementComponent::UpdateSpaceShipRotation(float DeltaTime)

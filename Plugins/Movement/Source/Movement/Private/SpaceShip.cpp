@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputTriggers.h"
+#include "NiagaraComponent.h"
 
 ASpaceShip::ASpaceShip()
 {
@@ -55,6 +56,14 @@ ASpaceShip::ASpaceShip()
     MovementComponent = CreateDefaultSubobject<USpaceShipMovementComponent>(TEXT("Movement"));
 
     bUseControllerRotationYaw = true;
+
+    FireRocketComponent1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FireRocketComponent1"));
+    FireRocketComponent2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FireRocketComponent2"));
+    FireRocketComponent3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FireRocketComponent3"));
+
+    FireRocketComponent1->SetupAttachment(MeshComponent);
+    FireRocketComponent2->SetupAttachment(MeshComponent);
+    FireRocketComponent3->SetupAttachment(MeshComponent);
 }
 
 void ASpaceShip::BeginPlay()
@@ -65,6 +74,10 @@ void ASpaceShip::BeginPlay()
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
             ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
+
+    FireRocketComponent1->SetFloatParameter("Scale", 60);
+    FireRocketComponent2->SetFloatParameter("Scale", 20);
+    FireRocketComponent3->SetFloatParameter("Scale", 20);
 }
 
 void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent)

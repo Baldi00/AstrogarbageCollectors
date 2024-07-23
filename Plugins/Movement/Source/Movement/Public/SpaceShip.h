@@ -9,6 +9,7 @@ class UStaticMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class USpaceShipMovementComponent;
+class UNiagaraComponent;
 
 class UInputMappingContext;
 class UInputAction;
@@ -27,11 +28,21 @@ class MOVEMENT_API ASpaceShip : public APawn
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<USpringArmComponent> SpringArmComponent;
+
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UCameraComponent> CameraComponent;
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<USpaceShipMovementComponent> MovementComponent;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UNiagaraComponent> FireRocketComponent1;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UNiagaraComponent> FireRocketComponent2;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UNiagaraComponent> FireRocketComponent3;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     UInputMappingContext* DefaultMappingContext;

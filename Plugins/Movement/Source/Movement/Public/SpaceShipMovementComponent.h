@@ -6,6 +6,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UNiagaraComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
@@ -36,18 +37,23 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float ForwardInputSmoothedDecaySpeed = 1;
 
-    FVector Velocity = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
+    FVector SpaceShipVelocity = FVector::ZeroVector;
     FVector CurrentMovementVector = FVector::ZeroVector;
 
     float TimeToReachMaxSpeedTimer = 0;
     float DefaultCameraSocketOffset = 500;
 
+    UPROPERTY(BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float ForwardInputSmoothedTimer = 0;
 
     APawn* Owner = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
     USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
     UCameraComponent* SpaceShipCameraComponent = nullptr;
+    UNiagaraComponent* FireRocketComponent1 = nullptr;
+    UNiagaraComponent* FireRocketComponent2 = nullptr;
+    UNiagaraComponent* FireRocketComponent3 = nullptr;
 
 public:
     USpaceShipMovementComponent();
