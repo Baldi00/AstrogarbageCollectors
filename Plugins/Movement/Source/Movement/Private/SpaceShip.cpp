@@ -93,6 +93,9 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ASpaceShip::Move);
 
         EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASpaceShip::Look);
+
+        EnhancedInputComponent->BindAction(StopAction, ETriggerEvent::Triggered, this, &ASpaceShip::DecreaseVelocity);
+        EnhancedInputComponent->BindAction(StopAction, ETriggerEvent::Completed, this, &ASpaceShip::DecreaseVelocity);
     }
 }
 
@@ -104,4 +107,9 @@ void ASpaceShip::Move(const FInputActionValue& Value)
 void ASpaceShip::Look(const FInputActionValue& Value)
 {
     MovementComponent->Look(Value.Get<FVector2D>());
+}
+
+void ASpaceShip::DecreaseVelocity(const FInputActionValue& Value)
+{
+    MovementComponent->DecreaseVelocity(Value.Get<bool>());
 }

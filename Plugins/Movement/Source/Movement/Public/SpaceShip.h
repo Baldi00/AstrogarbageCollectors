@@ -53,6 +53,9 @@ class MOVEMENT_API ASpaceShip : public APawn
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr <UInputAction> LookAction;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr <UInputAction> StopAction;
+
 public:
     ASpaceShip();
 
@@ -61,4 +64,5 @@ public:
 
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
+    void DecreaseVelocity(const FInputActionValue& Value);
 };

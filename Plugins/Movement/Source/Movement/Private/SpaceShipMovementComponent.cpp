@@ -70,6 +70,9 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
             SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * MaxSpeed;
     }
 
+    if (bDecreaseVelocity)
+        SpaceShipVelocity = FMath::VInterpTo(SpaceShipVelocity, FVector::ZeroVector, DeltaTime, 1);
+
     Owner->AddActorWorldOffset(SpaceShipVelocity);
 }
 

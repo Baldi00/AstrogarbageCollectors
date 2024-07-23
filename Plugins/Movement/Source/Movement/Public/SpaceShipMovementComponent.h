@@ -47,6 +47,8 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     UPROPERTY(BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float ForwardInputSmoothedTimer = 0;
 
+    bool bDecreaseVelocity = false;
+
     APawn* Owner = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
     USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
@@ -63,6 +65,7 @@ public:
 
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
     void Look(const FVector2D& LookVector);
+    void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
 
 private:
     void UpdateVelocity(float DeltaTime);
