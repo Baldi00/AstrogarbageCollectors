@@ -11,8 +11,7 @@ void AHittableObjectsSpawner::BeginPlay()
     Super::BeginPlay();
     if (HasAuthority())
     {
-        int32 ActorsToSpawn = UKismetMathLibrary::RandomIntegerInRange(MinObjectsToSpawn, MaxObjectsToSpawn);
-        for (int i = 0; i < ActorsToSpawn; i++)
+        for (int i = 0; i < MaxObjectsToSpawn; i++)
         {
             FVector SpawnLocation = UKismetMathLibrary::RandomUnitVector() * UKismetMathLibrary::RandomFloatInRange(MinSpawnRadius, MaxSpawnRadius);
 

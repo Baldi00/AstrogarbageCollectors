@@ -20,6 +20,8 @@ ASpaceShip::ASpaceShip()
     PrimaryActorTick.bCanEverTick = true;
     Tags.AddUnique("SpaceShip");
 
+    NetCullDistanceSquared = 150000 * 150000;
+
     SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 
     static FName SphereCollisionProfileName(TEXT("Pawn"));

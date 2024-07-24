@@ -8,6 +8,9 @@ ADestroyDecomposerBullet::ADestroyDecomposerBullet()
 
 void ADestroyDecomposerBullet::OnCollisionHappened()
 {
+    if (HitResult.GetActor()->ActorHasTag("SpaceShip") || HitResult.GetActor()->ActorHasTag("Checkpoint"))
+        return;
+
     if (HasAuthority() && BlackHoleClass)
     {
         ABlackHole* BlackHole = GetWorld()->SpawnActor<ABlackHole>(BlackHoleClass, HitResult.Location, FRotator::ZeroRotator);

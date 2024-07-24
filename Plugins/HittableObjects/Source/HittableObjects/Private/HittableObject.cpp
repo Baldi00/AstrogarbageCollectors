@@ -9,6 +9,8 @@ AHittableObject::AHittableObject()
 
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     RootComponent = Mesh;
+
+    NetCullDistanceSquared = 150000 * 150000;
 }
 
 void AHittableObject::BeginPlay()
@@ -16,7 +18,7 @@ void AHittableObject::BeginPlay()
     Super::BeginPlay();
     if (HasAuthority())
     {
-        Velocity = UKismetMathLibrary::RandomUnitVector() * UKismetMathLibrary::RandomFloatInRange(100, 1000);
+        Velocity = UKismetMathLibrary::RandomUnitVector() * UKismetMathLibrary::RandomFloatInRange(50, 200);
         AngularVelocity = FRotator(UKismetMathLibrary::RandomFloatInRange(-20, 20),
             UKismetMathLibrary::RandomFloatInRange(-20, 20), UKismetMathLibrary::RandomFloatInRange(-20, 20));
     }
