@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "HittableObjects",
+	"Description": "HittableObjects module for AstrogarbageCollectors",
+	"Category": "Other",
+	"CreatedBy": "Baldelli Andrea",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "HittableObjects",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
