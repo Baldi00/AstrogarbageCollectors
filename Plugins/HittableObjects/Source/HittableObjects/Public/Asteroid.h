@@ -11,4 +11,10 @@ class HITTABLEOBJECTS_API AAsteroid : public AHittableObject
 
 public:
 	AAsteroid();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDestroyAnimation();
+
+	UFUNCTION(BlueprintCallable)
+	void OnDestroyAnimationEnded();
 };

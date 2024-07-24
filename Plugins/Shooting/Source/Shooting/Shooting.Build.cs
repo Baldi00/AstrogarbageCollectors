@@ -38,6 +38,7 @@ public class Shooting : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"HittableObjects",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

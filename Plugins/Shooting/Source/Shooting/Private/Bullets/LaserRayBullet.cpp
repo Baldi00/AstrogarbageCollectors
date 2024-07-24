@@ -1,5 +1,6 @@
 #include "Bullets/LaserRayBullet.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Asteroid.h"
 
 ALaserRayBullet::ALaserRayBullet()
 {
@@ -19,8 +20,7 @@ void ALaserRayBullet::OnCollisionHappened()
             GetActorLocation() + UKismetMathLibrary::GetReflectionVector(GetActorForwardVector(), HitResult.Normal)));
     }
 
-    if (HasAuthority())
-    {
-        // Spawn Force field
-    }
+    if (HitActor->ActorHasTag("Asteroid"))
+        if (AAsteroid* Asteroid = Cast<AAsteroid>(HitActor))
+            Asteroid->StartDestroyAnimation();
 }
