@@ -2,9 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Components/SceneComponent.h"
-#include "Bullets/Bullet.h"
 #include "SpaceShipShootingComponent.generated.h"
+
+class USceneComponent;
+class ALaserRayBullet;
+class ADestroyDecomposerBullet;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTING_API USpaceShipShootingComponent : public UActorComponent
@@ -12,9 +14,9 @@ class SHOOTING_API USpaceShipShootingComponent : public UActorComponent
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ABullet> LaserRayBulletClass;
+	TSubclassOf<ALaserRayBullet> LaserRayBulletClass;
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ABullet> DestroyDecomposerBulletClass;
+	TSubclassOf<ADestroyDecomposerBullet> DestroyDecomposerBulletClass;
 
 	USceneComponent* LeftLaserRaySceneComponent = nullptr;
 	USceneComponent* RightLaserRaySceneComponent = nullptr;
@@ -24,6 +26,6 @@ public:
 	USpaceShipShootingComponent();
 
 	void SetShootingSceneComponents(USceneComponent* Left, USceneComponent* Center, USceneComponent* Right);
-	void ShootLaserRays(FRotator BulletsRotation);
-	void ShootDestroyDecomposer(FRotator BulletRotation);
+	void ShootLaserRays(FRotator BulletsRotation, AActor* Shooter);
+	void ShootDestroyDecomposer(FRotator BulletRotation, AActor* Shooter);
 };

@@ -45,20 +45,14 @@ void ABullet::AddCollisionIgnoredActor(AActor* InIgnoredActor)
 void ABullet::StepForward(float DeltaTime)
 {
     NextLocation = GetActorLocation() + DeltaTime * Speed * GetActorForwardVector();
-
-    if (HasAuthority())
-        CheckCollisionsBetweenPreviousAndNextLocations();
-
+    CheckCollisionsBetweenPreviousAndNextLocations();
     SetActorLocation(NextLocation);
 }
 
 void ABullet::CheckCollisionsBetweenPreviousAndNextLocations()
 {
-    if (HasAuthority())
-    {
-        if (GetWorld()->LineTraceSingleByChannel(HitResult, GetActorLocation(), NextLocation, ECC_Visibility, LineTraceQueryParams))
-            OnCollisionHappened();
-    }
+    if (GetWorld()->LineTraceSingleByChannel(HitResult, GetActorLocation(), NextLocation, ECC_Visibility, LineTraceQueryParams))
+        OnCollisionHappened();
 }
 
 void ABullet::OnCollisionHappened()

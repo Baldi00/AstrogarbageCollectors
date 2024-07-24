@@ -103,9 +103,9 @@ public:
     UFUNCTION(Server, Unreliable)
     void Server_DecreaseVelocity(bool bInDecreaseVelocity);
     UFUNCTION(Server, Reliable)
-    void Server_ShootLaserRays(FRotator BulletsRotation);
+    void Server_ShootLaserRays(FRotator BulletsRotation, AActor* Shooter);
     UFUNCTION(Server, Reliable)
-    void Server_ShootDestroyDecomposer(FRotator BulletRotation);
+    void Server_ShootDestroyDecomposer(FRotator BulletRotation, AActor* Shooter);
 
 protected:
     UFUNCTION()

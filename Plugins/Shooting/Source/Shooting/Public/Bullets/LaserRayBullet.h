@@ -9,6 +9,8 @@ class SHOOTING_API ALaserRayBullet : public ABullet
 {
 	GENERATED_BODY()
 	
+	bool bAlreadyHit = false;
+
 public:	
 	ALaserRayBullet();
 

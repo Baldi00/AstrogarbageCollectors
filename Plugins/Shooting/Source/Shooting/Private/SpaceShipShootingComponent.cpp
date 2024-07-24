@@ -1,4 +1,6 @@
 #include "SpaceShipShootingComponent.h"
+#include "Bullets/LaserRayBullet.h"
+#include "Bullets/DestroyDecomposerBullet.h"
 
 USpaceShipShootingComponent::USpaceShipShootingComponent()
 {
@@ -12,23 +14,28 @@ void USpaceShipShootingComponent::SetShootingSceneComponents(USceneComponent* Le
 	CentralDestroyDecomposerSceneComponent = Center;
 }
 
-void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
+void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation, AActor* Shooter)
 {
 	if (GetOwner()->HasAuthority())
 	{
-		GetWorld()->SpawnActor<AActor>(LaserRayBulletClass,
+		ALaserRayBullet* LaserRayBullet1 = GetWorld()->SpawnActor<ALaserRayBullet>(LaserRayBulletClass,
 			LeftLaserRaySceneComponent->GetComponentLocation(), BulletsRotation);
-		GetWorld()->SpawnActor<AActor>(LaserRayBulletClass,
+		ALaserRayBullet* LaserRayBullet2 = GetWorld()->SpawnActor<ALaserRayBullet>(LaserRayBulletClass,
 			RightLaserRaySceneComponent->GetComponentLocation(), BulletsRotation);
+
+		LaserRayBullet1->AddCollisionIgnoredActor(Shooter);
+		LaserRayBullet2->AddCollisionIgnoredActor(Shooter);
 	}
 }
 
-void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation)
+void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation, AActor* Shooter)
 {
 	if (GetOwner()->HasAuthority())
 	{
-		GetWorld()->SpawnActor<AActor>(DestroyDecomposerBulletClass,
+		ADestroyDecomposerBullet* DestroyDecomposerBullet = GetWorld()->SpawnActor<ADestroyDecomposerBullet>(DestroyDecomposerBulletClass,
 			CentralDestroyDecomposerSceneComponent->GetComponentLocation(), BulletRotation);
+
+		DestroyDecomposerBullet->AddCollisionIgnoredActor(Shooter);
 	}
 }
 

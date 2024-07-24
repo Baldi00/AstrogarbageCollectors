@@ -18,6 +18,7 @@
 ASpaceShip::ASpaceShip()
 {
     PrimaryActorTick.bCanEverTick = true;
+    Tags.AddUnique("SpaceShip");
 
     SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 
@@ -28,9 +29,10 @@ ASpaceShip::ASpaceShip()
 
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
-    static FName MeshCollisionProfileName(TEXT("NoCollision"));
+    static FName MeshCollisionProfileName(TEXT("BlockAll"));
 
     MeshComponent->SetCollisionProfileName(MeshCollisionProfileName);
+    MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     MeshComponent->SetNotifyRigidBodyCollision(false);
     MeshComponent->SetGenerateOverlapEvents(false);
 
@@ -177,9 +179,9 @@ void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
         PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
 
     if (HasAuthority())
-        ShootingComponent->ShootLaserRays(BulletsRotation);
+        ShootingComponent->ShootLaserRays(BulletsRotation, this);
     else
-        Server_ShootLaserRays(BulletsRotation);
+        Server_ShootLaserRays(BulletsRotation, this);
 }
 
 void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
@@ -191,9 +193,9 @@ void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
         PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
 
     if (HasAuthority())
-        ShootingComponent->ShootDestroyDecomposer(BulletRotation);
+        ShootingComponent->ShootDestroyDecomposer(BulletRotation, this);
     else
-        Server_ShootDestroyDecomposer(BulletRotation);
+        Server_ShootDestroyDecomposer(BulletRotation, this);
 }
 
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
@@ -211,14 +213,14 @@ void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity
     MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
 }
 
-void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation)
+void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation, AActor* Shooter)
 {
-    ShootingComponent->ShootLaserRays(BulletsRotation);
+    ShootingComponent->ShootLaserRays(BulletsRotation, Shooter);
 }
 
-void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation)
+void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation, AActor* Shooter)
 {
-    ShootingComponent->ShootDestroyDecomposer(BulletRotation);
+    ShootingComponent->ShootDestroyDecomposer(BulletRotation, Shooter);
 }
 
 void ASpaceShip::OnRep_ActorLocation()
