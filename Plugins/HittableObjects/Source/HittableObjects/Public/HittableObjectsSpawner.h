@@ -12,16 +12,16 @@ class HITTABLEOBJECTS_API AHittableObjectsSpawner : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(Category = HittableObjectSpawner, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	int32 MinObjectsToSpawn = 100;
+	int32 MinObjectsToSpawn = 300;
 
 	UPROPERTY(Category = HittableObjectSpawner, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	int32 MaxObjectsToSpawn = 300;
+	int32 MaxObjectsToSpawn = 500;
 
 	UPROPERTY(Category = HittableObjectSpawner, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	float MaxSpawnRadius = 300000;
+	float MaxSpawnRadius = 150000;
 
 	UPROPERTY(Category = HittableObjectSpawner, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	float MinSpawnRadius = 1000;
+	float MinSpawnRadius = 10000;
 
 	UPROPERTY(Category = HittableObjectSpawner, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float AsteroidSpawnProbability = 0.6f;
