@@ -81,6 +81,8 @@ class PLAYER_API ASpaceShip : public APawn
     UPROPERTY(ReplicatedUsing = "OnRep_ActorRotation");
     FRotator ActorRotation;
 
+    APlayerCameraManager* PlayerCameraManager;
+
 public:
     ASpaceShip();
 
@@ -101,9 +103,9 @@ public:
     UFUNCTION(Server, Unreliable)
     void Server_DecreaseVelocity(bool bInDecreaseVelocity);
     UFUNCTION(Server, Reliable)
-    void Server_ShootLaserRays();
+    void Server_ShootLaserRays(FRotator BulletsRotation);
     UFUNCTION(Server, Reliable)
-    void Server_ShootDestroyDecomposer();
+    void Server_ShootDestroyDecomposer(FRotator BulletRotation);
 
 protected:
     UFUNCTION()

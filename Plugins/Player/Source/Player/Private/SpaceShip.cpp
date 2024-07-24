@@ -13,6 +13,7 @@
 #include "InputTriggers.h"
 #include "NiagaraComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ASpaceShip::ASpaceShip()
 {
@@ -89,6 +90,14 @@ void ASpaceShip::BeginPlay()
             ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
 
+    if (IsLocallyControlled())
+    {
+        if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+            PlayerCameraManager = PlayerController->PlayerCameraManager;
+
+        ensureMsgf(PlayerCameraManager != nullptr, TEXT("ASpaceShip::BeginPlay, Actor doesn't have a PlayerCameraManager"));
+    }
+
     FireRocketComponent1->SetFloatParameter("Scale", 60);
     FireRocketComponent2->SetFloatParameter("Scale", 20);
     FireRocketComponent3->SetFloatParameter("Scale", 20);
@@ -146,7 +155,7 @@ void ASpaceShip::Look(const FInputActionValue& Value)
     {
         FRotator SpringArmRotation = SpringArmComponent->GetRelativeRotation();
         SpringArmRotation.Add(-Value.Get<FVector2D>().Y, Value.Get<FVector2D>().X, 0);
-        SpringArmRotation.Pitch = FMath::Clamp(SpringArmRotation.Pitch, -45.f, 45.f);
+        SpringArmRotation.Pitch = FMath::Clamp(SpringArmRotation.Pitch, -30.f, 30.f);
         SpringArmRotation.Roll = 0;
         SpringArmComponent->SetRelativeRotation(SpringArmRotation);
     }
@@ -161,18 +170,30 @@ void ASpaceShip::DecreaseVelocity(const FInputActionValue& Value)
 
 void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
 {
+    if (!PlayerCameraManager)
+        return;
+
+    FRotator BulletsRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCameraManager->GetCameraLocation(),
+        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
+
     if (HasAuthority())
-        ShootingComponent->ShootLaserRays();
+        ShootingComponent->ShootLaserRays(BulletsRotation);
     else
-        Server_ShootLaserRays();
+        Server_ShootLaserRays(BulletsRotation);
 }
 
 void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
 {
+    if (!PlayerCameraManager)
+        return;
+
+    FRotator BulletRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCameraManager->GetCameraLocation(),
+        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
+
     if (HasAuthority())
-        ShootingComponent->ShootDestroyDecomposer();
+        ShootingComponent->ShootDestroyDecomposer(BulletRotation);
     else
-        Server_ShootDestroyDecomposer();
+        Server_ShootDestroyDecomposer(BulletRotation);
 }
 
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
@@ -190,14 +211,14 @@ void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity
     MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
 }
 
-void ASpaceShip::Server_ShootLaserRays_Implementation()
+void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation)
 {
-    ShootingComponent->ShootLaserRays();
+    ShootingComponent->ShootLaserRays(BulletsRotation);
 }
 
-void ASpaceShip::Server_ShootDestroyDecomposer_Implementation()
+void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation)
 {
-    ShootingComponent->ShootDestroyDecomposer();
+    ShootingComponent->ShootDestroyDecomposer(BulletRotation);
 }
 
 void ASpaceShip::OnRep_ActorLocation()

@@ -1,4 +1,3 @@
-
 #include "SpaceShipShootingComponent.h"
 
 USpaceShipShootingComponent::USpaceShipShootingComponent()
@@ -11,27 +10,25 @@ void USpaceShipShootingComponent::SetShootingSceneComponents(USceneComponent* Le
 	LeftLaserRaySceneComponent = Left;
 	RightLaserRaySceneComponent = Right;
 	CentralDestroyDecomposerSceneComponent = Center;
-
 }
 
-void USpaceShipShootingComponent::ShootLaserRays()
+void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
 {
 	if (GetOwner()->HasAuthority())
 	{
 		GetWorld()->SpawnActor<AActor>(LaserRayBulletClass,
-			LeftLaserRaySceneComponent->GetComponentLocation(), LeftLaserRaySceneComponent->GetComponentRotation());
+			LeftLaserRaySceneComponent->GetComponentLocation(), BulletsRotation);
 		GetWorld()->SpawnActor<AActor>(LaserRayBulletClass,
-			RightLaserRaySceneComponent->GetComponentLocation(), RightLaserRaySceneComponent->GetComponentRotation());
+			RightLaserRaySceneComponent->GetComponentLocation(), BulletsRotation);
 	}
 }
 
-void USpaceShipShootingComponent::ShootDestroyDecomposer()
+void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation)
 {
 	if (GetOwner()->HasAuthority())
 	{
 		GetWorld()->SpawnActor<AActor>(DestroyDecomposerBulletClass,
-			CentralDestroyDecomposerSceneComponent->GetComponentLocation(),
-			CentralDestroyDecomposerSceneComponent->GetComponentRotation());
+			CentralDestroyDecomposerSceneComponent->GetComponentLocation(), BulletRotation);
 	}
 }
 
