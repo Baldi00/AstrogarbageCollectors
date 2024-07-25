@@ -2,9 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "HittableObject.h"
 #include "HittableObjectsSpawner.generated.h"
-
-class AHittableObject;
 
 UCLASS()
 class HITTABLEOBJECTS_API AHittableObjectsSpawner : public AActor
