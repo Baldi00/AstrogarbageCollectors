@@ -8,15 +8,24 @@ class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFuelLevelUpdated, float, InCurrentFuelLevel);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
 {
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float MaxSpeed = 50;
+    float MaxSpeed = 75;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float Acceleration = 20;
+    float Acceleration = 30;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
+    float MaxFuel = 100;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
+    float FuelDecreaseSpeed = 2;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
+    float FuelDecreaseSpeedForward = 3.5f;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float MaxPitchAngle = 4.5f;
@@ -51,6 +60,11 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
 
     bool bDecreaseVelocity = false;
 
+    float CurrentFuelLevel = 0;
+
+    UPROPERTY(BlueprintAssignable)
+    FOnFuelLevelUpdated OnFuelLevelUpdated;
+
     APawn* Owner = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
     USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
@@ -68,6 +82,7 @@ public:
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
     void Rotate(const FVector2D& LookVector);
     void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
+    void RechargeFuel();
 
 private:
     void UpdateVelocity(float DeltaTime);
