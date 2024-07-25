@@ -181,9 +181,9 @@ void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
         PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
 
     if (HasAuthority())
-        ShootingComponent->ShootLaserRays(BulletsRotation, this);
+        ShootingComponent->ShootLaserRays(BulletsRotation, ShootingComponent);
     else
-        Server_ShootLaserRays(BulletsRotation, this);
+        Server_ShootLaserRays(BulletsRotation, ShootingComponent);
 }
 
 void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
@@ -195,9 +195,9 @@ void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
         PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
 
     if (HasAuthority())
-        ShootingComponent->ShootDestroyDecomposer(BulletRotation, this);
+        ShootingComponent->ShootDestroyDecomposer(BulletRotation, ShootingComponent);
     else
-        Server_ShootDestroyDecomposer(BulletRotation, this);
+        Server_ShootDestroyDecomposer(BulletRotation, ShootingComponent);
 }
 
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
@@ -215,12 +215,12 @@ void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity
     MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
 }
 
-void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation, AActor* Shooter)
+void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation, USpaceShipShootingComponent* Shooter)
 {
     ShootingComponent->ShootLaserRays(BulletsRotation, Shooter);
 }
 
-void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation, AActor* Shooter)
+void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation, USpaceShipShootingComponent* Shooter)
 {
     ShootingComponent->ShootDestroyDecomposer(BulletRotation, Shooter);
 }
