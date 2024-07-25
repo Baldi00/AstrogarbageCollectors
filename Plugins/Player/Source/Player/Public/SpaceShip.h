@@ -107,6 +107,8 @@ public:
     UFUNCTION(Server, Reliable)
     void Server_ShootDestroyDecomposer(FRotator BulletRotation, USpaceShipShootingComponent* Shooter);
 
+    void Recharge();
+
 protected:
     UFUNCTION()
     void OnRep_ActorLocation();

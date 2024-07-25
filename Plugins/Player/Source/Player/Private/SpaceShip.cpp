@@ -225,6 +225,12 @@ void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRot
     ShootingComponent->ShootDestroyDecomposer(BulletRotation, Shooter);
 }
 
+void ASpaceShip::Recharge()
+{
+    MovementComponent->RechargeFuel();
+    ShootingComponent->Recharge();
+}
+
 void ASpaceShip::OnRep_ActorLocation()
 {
     if (!HasAuthority() && (!IsLocallyControlled() || FVector::DistSquared(GetActorLocation(), ActorLocation) > 10000))
