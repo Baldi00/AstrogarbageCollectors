@@ -27,6 +27,7 @@
 
 # Executables
 *.exe
+!UEModuleMaker.exe
 *.out
 *.app
 *.ipa
