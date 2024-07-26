@@ -177,8 +177,21 @@ void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
     if (!PlayerCameraManager)
         return;
 
-    FRotator BulletsRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCameraManager->GetCameraLocation(),
-        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
+
+
+    float ObjectDistance = 100000;
+    FHitResult HitResult;
+    FCollisionQueryParams Params;
+    Params.AddIgnoredActor(this);
+    if (GetWorld()->LineTraceSingleByChannel(HitResult, PlayerCameraManager->GetCameraLocation(),
+        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector() * 100000, ECC_Visibility, Params))
+        ObjectDistance = HitResult.Distance;
+
+    FVector FakeBulletStartLocation = CentralDestroyDecomposerSceneComponent->GetComponentLocation();
+    FakeBulletStartLocation.Z = LeftLaserRaySceneComponent->GetComponentLocation().Z;
+
+    FRotator BulletsRotation = UKismetMathLibrary::FindLookAtRotation(CentralDestroyDecomposerSceneComponent->GetComponentLocation(),
+        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector() * ObjectDistance);
 
     if (HasAuthority())
         ShootingComponent->ShootLaserRays(BulletsRotation, ShootingComponent);
@@ -191,8 +204,16 @@ void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
     if (!PlayerCameraManager)
         return;
 
-    FRotator BulletRotation = UKismetMathLibrary::FindLookAtRotation(PlayerCameraManager->GetCameraLocation(),
-        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector());
+    float ObjectDistance = 100000;
+    FHitResult HitResult;
+    FCollisionQueryParams Params;
+    Params.AddIgnoredActor(this);
+    if (GetWorld()->LineTraceSingleByChannel(HitResult, PlayerCameraManager->GetCameraLocation(),
+        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector() * 100000, ECC_Visibility, Params))
+        ObjectDistance = HitResult.Distance;
+
+    FRotator BulletRotation = UKismetMathLibrary::FindLookAtRotation(CentralDestroyDecomposerSceneComponent->GetComponentLocation(),
+        PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector() * ObjectDistance);
 
     if (HasAuthority())
         ShootingComponent->ShootDestroyDecomposer(BulletRotation, ShootingComponent);
