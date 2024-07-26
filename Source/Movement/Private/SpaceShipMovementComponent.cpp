@@ -46,7 +46,8 @@ void USpaceShipMovementComponent::BeginPlay()
 void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+    
+    UpdateForwardInputSmoothedTimer(DeltaTime);
     UpdateVelocity(DeltaTime);
     UpdateMovementEffects(DeltaTime);
 }
@@ -68,14 +69,17 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
     {
         if (CurrentMovementVector != FVector::ZeroVector && CurrentFuelLevel > 0)
         {
+            float CurrentAcceleration = FMath::Lerp(Acceleration, AccelerationForward, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+            float CurrentMaxSpeed = FMath::Lerp(MaxSpeed, MaxSpeedForward, ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration);
+
             FVector Movement = FVector::ZeroVector;
             Movement += CurrentMovementVector.X * (1.f - FMath::Abs(CurrentMovementVector.Y) * 0.5f) * Owner->GetActorRightVector();
             Movement += CurrentMovementVector.Y * Owner->GetActorForwardVector();
             Movement += CurrentMovementVector.Z * Owner->GetActorUpVector();
-            SpaceShipVelocity += DeltaTime * Acceleration * Movement;
+            SpaceShipVelocity += DeltaTime * CurrentAcceleration * Movement;
 
-            if (SpaceShipVelocity.SquaredLength() > MaxSpeed * MaxSpeed)
-                SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * MaxSpeed;
+            if (SpaceShipVelocity.SquaredLength() > CurrentMaxSpeed * CurrentMaxSpeed)
+                SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * CurrentMaxSpeed;
 
             CurrentFuelLevel = FMath::Max(0,
                 CurrentFuelLevel - (CurrentMovementVector.Y > 0 ? FuelDecreaseSpeedForward : FuelDecreaseSpeed) * DeltaTime);
@@ -85,8 +89,11 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
         if (bDecreaseVelocity && CurrentFuelLevel > 0)
         {
             SpaceShipVelocity = FMath::VInterpTo(SpaceShipVelocity, FVector::ZeroVector, DeltaTime, 1);
-            CurrentFuelLevel = FMath::Max(0, CurrentFuelLevel - FuelDecreaseSpeed * DeltaTime);
-            OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
+            if (SpaceShipVelocity.SquaredLength() > 25)
+            {
+                CurrentFuelLevel = FMath::Max(0, CurrentFuelLevel - FuelDecreaseSpeed * DeltaTime);
+                OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
+            }
         }
 
         Owner->AddActorWorldOffset(SpaceShipVelocity);
@@ -96,7 +103,6 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
 void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)
 {
     UpdateSpaceShipRotation(DeltaTime);
-    UpdateForwardInputSmoothedTimer(DeltaTime);
     UpdateFireRockets();
 
     if (Owner->IsLocallyControlled())

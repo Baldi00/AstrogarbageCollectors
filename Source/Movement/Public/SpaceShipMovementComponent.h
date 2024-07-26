@@ -19,13 +19,17 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     float MaxSpeed = 75;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     float Acceleration = 30;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    float MaxSpeedForward = 150;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    float AccelerationForward = 60;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
     float MaxFuel = 100;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
     float FuelDecreaseSpeed = 2;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
-    float FuelDecreaseSpeedForward = 3.5f;
+    float FuelDecreaseSpeedForward = 3;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement Effects", meta = (AllowPrivateAccess = "true"))
     float MaxPitchAngle = 4.5f;
