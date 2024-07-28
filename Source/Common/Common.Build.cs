@@ -8,7 +8,7 @@ public class Common : ModuleRules
         PublicIncludePaths.AddRange(new string[] { });
         PrivateIncludePaths.AddRange(new string[] { });
         PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "ABUtils" });
         DynamicallyLoadedModuleNames.AddRange(new string[] { });
     }
 }

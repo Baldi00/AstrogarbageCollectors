@@ -2,10 +2,10 @@
 
 void UABLog::Log(FString String, int32 Line, FString FunctionName)
 {
-    FString ToPrint = FunctionName + " (Line " + FString::FromInt(Line) + "): " + String;
     int32 Key = rand() % 4294967295 - 2147483648;
-    GEngine->AddOnScreenDebugMessage(Key, 3, FColor::Cyan, ToPrint);
-    UE_LOG(LogTemp, Warning, TEXT("%s"), *ToPrint);
+    GEngine->AddOnScreenDebugMessage(Key, 3, FColor::Cyan, String);
+    FString ToPrintLogger = FunctionName + " (Line " + FString::FromInt(Line) + "): " + String;
+    UE_LOG(LogTemp, Warning, TEXT("%s"), *ToPrintLogger);
 }
 
 void UABLog::Log(const char* String, int32 Line, FString FunctionName)
