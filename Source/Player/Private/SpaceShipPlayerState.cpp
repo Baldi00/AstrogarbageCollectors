@@ -14,17 +14,17 @@ void ASpaceShipPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 
 void ASpaceShipPlayerState::OnRep_FuelLevel()
 {
-    LOGF("Fuel level replicated on %s", *GetName());
+    //LOGF("Fuel level replicated on %s", *GetName());
 }
 
 void ASpaceShipPlayerState::OnRep_LaserRayAmmo()
 {
-    LOGF("Laser ray ammo replicated on %s", *GetName());
+    //LOGF("Laser ray ammo replicated on %s", *GetName());
 }
 
 void ASpaceShipPlayerState::OnRep_DestroyDecomposerAmmo()
 {
-    LOGF("Destroy decomposer ammo replicated on %s", *GetName());
+    //LOGF("Destroy decomposer ammo replicated on %s", *GetName());
 }
 
 void ASpaceShipPlayerState::OnRep_AsteroidsDestroyed()
