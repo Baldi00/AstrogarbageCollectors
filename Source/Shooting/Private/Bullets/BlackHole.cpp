@@ -1,6 +1,8 @@
 #include "Bullets/BlackHole.h"
 #include "Components/StaticMeshComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "SpaceShipPlayerStateInterface.h"
+#include "GameFramework/PlayerState.h"
 
 ABlackHole::ABlackHole()
 {
@@ -31,6 +33,17 @@ void ABlackHole::OnBlackHoleAnimationEnded()
     {
         if (IsValid(HitActor))
             HitActor->Destroy();
+
+        if (HasAuthority())
+        {
+            if (APawn* OwnerPawn = Cast<APawn>(GetOwner()))
+            {
+                ISpaceShipPlayerStateInterface* PlayerState = Cast<ISpaceShipPlayerStateInterface>(OwnerPawn->GetPlayerState());
+                PlayerState->IncreaseSatellitesDestroyed();
+                PlayerState->OnRep_SatellitesDestroyed();
+            }
+        }
+
         Destroy();
     }
 }

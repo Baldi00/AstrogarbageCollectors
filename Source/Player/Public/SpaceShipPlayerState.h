@@ -27,8 +27,8 @@ public:
     virtual void SetFuelLevel(float InFuelLevel) override { FuelLevel = InFuelLevel; }
     virtual void SetLaserRayAmmo(int32 InLaserRayAmmo) override { LaserRayAmmo = InLaserRayAmmo; }
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) override { DestroyDecomposerAmmo = InDestroyDecomposerAmmo; }
-    virtual void SetAsteroidsDestroyed(int32 InAsteroidsDestroyed) override { AsteroidsDestroyed = InAsteroidsDestroyed; }
-    virtual void SetSatellitesDestroyed(int32 InSatellitesDestroyed) override { SatellitesDestroyed = InSatellitesDestroyed; }
+    virtual void IncreaseAsteroidsDestroyed() override { AsteroidsDestroyed++; }
+    virtual void IncreaseSatellitesDestroyed() override { SatellitesDestroyed++; }
 
     virtual float GetFuelLevel() const override { return FuelLevel; }
     virtual int32 GetLaserRayAmmo() const override { return LaserRayAmmo; }

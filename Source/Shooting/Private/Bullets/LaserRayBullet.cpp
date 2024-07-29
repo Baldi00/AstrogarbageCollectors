@@ -1,6 +1,8 @@
 #include "Bullets/LaserRayBullet.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "AsteroidInterface.h"
+#include "SpaceShipPlayerStateInterface.h"
+#include "GameFramework/PlayerState.h"
 
 ALaserRayBullet::ALaserRayBullet()
 {
@@ -23,7 +25,21 @@ void ALaserRayBullet::OnCollisionHappened()
     if (HitActor->ActorHasTag("Asteroid"))
         if (IAsteroidInterface* Asteroid = Cast<IAsteroidInterface>(HitActor))
         {
+            if (Asteroid->IsAlreadyDestroyed())
+                return;
+
             Asteroid->DestroyAsteroid();
+
+            if (HasAuthority())
+            {
+                if (APawn* OwnerPawn = Cast<APawn>(Owner))
+                {
+                    ISpaceShipPlayerStateInterface* PlayerState = Cast<ISpaceShipPlayerStateInterface>(OwnerPawn->GetPlayerState());
+                    PlayerState->IncreaseAsteroidsDestroyed();
+                    PlayerState->OnRep_AsteroidsDestroyed();
+                }
+            }
+
             Destroy();
         }
 }

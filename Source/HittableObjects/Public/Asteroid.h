@@ -10,6 +10,8 @@ class HITTABLEOBJECTS_API AAsteroid : public AHittableObject, public IAsteroidIn
 {
 	GENERATED_BODY()
 
+	bool bAlreadyHit = false;
+
 public:
 	AAsteroid();
 
@@ -20,4 +22,5 @@ public:
 	void OnDestroyAnimationEnded();
 
 	void DestroyAsteroid() override;
+	bool IsAlreadyDestroyed() override;
 };

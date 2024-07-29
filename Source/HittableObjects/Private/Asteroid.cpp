@@ -13,5 +13,13 @@ void AAsteroid::OnDestroyAnimationEnded()
 
 void AAsteroid::DestroyAsteroid()
 {
+    if (bAlreadyHit)
+        return;
+    bAlreadyHit = true;
     StartDestroyAnimation();
+}
+
+bool AAsteroid::IsAlreadyDestroyed()
+{
+    return bAlreadyHit;
 }

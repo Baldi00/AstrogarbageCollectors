@@ -59,6 +59,8 @@ void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
 
         LaserRayBullet1->AddCollisionIgnoredActor(Owner);
         LaserRayBullet2->AddCollisionIgnoredActor(Owner);
+        LaserRayBullet1->SetOwner(Owner);
+        LaserRayBullet2->SetOwner(Owner);
         UpdateAmmoCount(CurrentLaserRayAmmo - 2, CurrentDestroyDecomposerAmmo);
     }
 }
@@ -74,6 +76,7 @@ void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation
             CentralDestroyDecomposerSceneComponent->GetComponentLocation(), BulletRotation);
 
         DestroyDecomposerBullet->AddCollisionIgnoredActor(Owner);
+        DestroyDecomposerBullet->SetOwner(Owner);
         UpdateAmmoCount(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo - 1);
     }
 }

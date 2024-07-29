@@ -18,8 +18,8 @@ public:
     virtual void SetFuelLevel(float InFuelLevel) = 0;
     virtual void SetLaserRayAmmo(int32 InLaserRayAmmo) = 0;
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) = 0;
-    virtual void SetAsteroidsDestroyed(int32 InAsteroidsDestroyed) = 0;
-    virtual void SetSatellitesDestroyed(int32 InSatellitesDestroyed) = 0;
+    virtual void IncreaseAsteroidsDestroyed() = 0;
+    virtual void IncreaseSatellitesDestroyed() = 0;
 
     virtual float GetFuelLevel() const = 0;
     virtual int32 GetLaserRayAmmo() const = 0;

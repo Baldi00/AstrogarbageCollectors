@@ -16,4 +16,5 @@ class COMMON_API IAsteroidInterface
 
 public:
     virtual void DestroyAsteroid() = 0;
+    virtual bool IsAlreadyDestroyed() = 0;
 };

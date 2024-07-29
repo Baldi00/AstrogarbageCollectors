@@ -15,7 +15,10 @@ void ADestroyDecomposerBullet::OnCollisionHappened()
     {
         ABlackHole* BlackHole = GetWorld()->SpawnActor<ABlackHole>(BlackHoleClass, HitResult.Location, FRotator::ZeroRotator);
         if (BlackHole)
+        {
             BlackHole->SetHitActor(HitResult.GetActor());
+            BlackHole->SetOwner(GetOwner());
+        }
         Destroy();
     }
 }
