@@ -1,6 +1,6 @@
 #include "Bullets/LaserRayBullet.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Asteroid.h"
+#include "AsteroidInterface.h"
 
 ALaserRayBullet::ALaserRayBullet()
 {
@@ -21,6 +21,6 @@ void ALaserRayBullet::OnCollisionHappened()
     }
 
     if (HitActor->ActorHasTag("Asteroid"))
-        if (AAsteroid* Asteroid = Cast<AAsteroid>(HitActor))
-            Asteroid->StartDestroyAnimation();
+        if (IAsteroidInterface* Asteroid = Cast<IAsteroidInterface>(HitActor))
+            Asteroid->DestroyAsteroid();
 }

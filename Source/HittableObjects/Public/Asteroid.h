@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "HittableObject.h"
+#include "AsteroidInterface.h"
 #include "Asteroid.generated.h"
 
 UCLASS()
-class HITTABLEOBJECTS_API AAsteroid : public AHittableObject
+class HITTABLEOBJECTS_API AAsteroid : public AHittableObject, public IAsteroidInterface
 {
 	GENERATED_BODY()
 
@@ -17,4 +18,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnDestroyAnimationEnded();
+
+	void DestroyAsteroid() override;
 };

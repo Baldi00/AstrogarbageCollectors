@@ -10,3 +10,8 @@ void AAsteroid::OnDestroyAnimationEnded()
     if (HasAuthority())
         Destroy();
 }
+
+void AAsteroid::DestroyAsteroid()
+{
+    StartDestroyAnimation();
+}
