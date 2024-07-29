@@ -77,6 +77,9 @@ class PLAYER_API ASpaceShip : public APawn, public IRechargeable
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr <UInputAction> ShootDestroyDecomposerAction;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr <UInputAction> RelocateAction;
+
     UPROPERTY(ReplicatedUsing = "OnRep_ActorLocation");
     FVector ActorLocation;
     UPROPERTY(ReplicatedUsing = "OnRep_ActorRotation");
@@ -97,6 +100,7 @@ public:
     void DecreaseVelocity(const FInputActionValue& Value);
     void ShootLaserRays(const FInputActionValue& Value);
     void ShootDestroyDecomposer(const FInputActionValue& Value);
+    void Relocate(const FInputActionValue& Value);
 
     UFUNCTION(Server, Unreliable)
     void Server_Move(FVector MovementVector);
@@ -108,6 +112,8 @@ public:
     void Server_ShootLaserRays(FRotator BulletsRotation);
     UFUNCTION(Server, Reliable)
     void Server_ShootDestroyDecomposer(FRotator BulletRotation);
+    UFUNCTION(Server, Reliable)
+    void Server_Relocate();
 
     virtual void Recharge() override;
 

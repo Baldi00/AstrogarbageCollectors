@@ -138,7 +138,9 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
         EnhancedInputComponent->BindAction(StopAction, ETriggerEvent::Completed, this, &ASpaceShip::DecreaseVelocity);
 
         EnhancedInputComponent->BindAction(ShootLaserRaysAction, ETriggerEvent::Started, this, &ASpaceShip::ShootLaserRays);
-        EnhancedInputComponent->BindAction(ShootDestroyDecomposerAction, ETriggerEvent::Completed, this, &ASpaceShip::ShootDestroyDecomposer);
+        EnhancedInputComponent->BindAction(ShootDestroyDecomposerAction, ETriggerEvent::Started, this, &ASpaceShip::ShootDestroyDecomposer);
+
+        EnhancedInputComponent->BindAction(RelocateAction, ETriggerEvent::Triggered, this, &ASpaceShip::Relocate);
     }
 }
 
@@ -227,6 +229,13 @@ void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
         Server_ShootDestroyDecomposer(BulletRotation);
 }
 
+void ASpaceShip::Relocate(const FInputActionValue& Value)
+{
+    MovementComponent->Relocate();
+    if (!HasAuthority())
+        Server_Relocate();
+}
+
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
 {
     MovementComponent->Move(MovementVector);
@@ -250,6 +259,11 @@ void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation)
 void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation)
 {
     ShootingComponent->ShootDestroyDecomposer(BulletRotation);
+}
+
+void ASpaceShip::Server_Relocate_Implementation()
+{
+    MovementComponent->Relocate();
 }
 
 void ASpaceShip::Recharge()

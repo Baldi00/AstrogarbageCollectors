@@ -89,6 +89,8 @@ public:
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
     void Rotate(const FVector2D& LookVector);
     void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
+    void Relocate();
+
     virtual void Recharge() override;
 
     void SetPlayerState(APlayerState* InPlayerState);
