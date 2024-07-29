@@ -142,6 +142,16 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
     }
 }
 
+void ASpaceShip::PossessedBy(AController* NewController)
+{
+    Super::PossessedBy(NewController);
+    if (HasAuthority())
+    {
+        MovementComponent->SetPlayerState(GetPlayerState());
+        ShootingComponent->SetPlayerState(GetPlayerState());
+    }
+}
+
 void ASpaceShip::Move(const FInputActionValue& Value)
 {
     MovementComponent->Move(Value.Get<FVector>());
@@ -177,8 +187,6 @@ void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
     if (!PlayerCameraManager)
         return;
 
-
-
     float ObjectDistance = 100000;
     FHitResult HitResult;
     FCollisionQueryParams Params;
@@ -193,10 +201,9 @@ void ASpaceShip::ShootLaserRays(const FInputActionValue& Value)
     FRotator BulletsRotation = UKismetMathLibrary::FindLookAtRotation(CentralDestroyDecomposerSceneComponent->GetComponentLocation(),
         PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector() * ObjectDistance);
 
-    if (HasAuthority())
-        ShootingComponent->ShootLaserRays(BulletsRotation, ShootingComponent);
-    else
-        Server_ShootLaserRays(BulletsRotation, ShootingComponent);
+    ShootingComponent->ShootLaserRays(BulletsRotation);
+    if (!HasAuthority())
+        Server_ShootLaserRays(BulletsRotation);
 }
 
 void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
@@ -215,10 +222,9 @@ void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
     FRotator BulletRotation = UKismetMathLibrary::FindLookAtRotation(CentralDestroyDecomposerSceneComponent->GetComponentLocation(),
         PlayerCameraManager->GetCameraLocation() + PlayerCameraManager->GetActorForwardVector() * ObjectDistance);
 
-    if (HasAuthority())
-        ShootingComponent->ShootDestroyDecomposer(BulletRotation, ShootingComponent);
-    else
-        Server_ShootDestroyDecomposer(BulletRotation, ShootingComponent);
+    ShootingComponent->ShootDestroyDecomposer(BulletRotation);
+    if (!HasAuthority())
+        Server_ShootDestroyDecomposer(BulletRotation);
 }
 
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
@@ -236,14 +242,14 @@ void ASpaceShip::Server_DecreaseVelocity_Implementation(bool bInDecreaseVelocity
     MovementComponent->DecreaseVelocity(bInDecreaseVelocity);
 }
 
-void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation, USpaceShipShootingComponent* Shooter)
+void ASpaceShip::Server_ShootLaserRays_Implementation(FRotator BulletsRotation)
 {
-    ShootingComponent->ShootLaserRays(BulletsRotation, Shooter);
+    ShootingComponent->ShootLaserRays(BulletsRotation);
 }
 
-void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation, USpaceShipShootingComponent* Shooter)
+void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRotation)
 {
-    ShootingComponent->ShootDestroyDecomposer(BulletRotation, Shooter);
+    ShootingComponent->ShootDestroyDecomposer(BulletRotation);
 }
 
 void ASpaceShip::Recharge()

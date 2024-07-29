@@ -3,6 +3,8 @@
 #include "Camera/CameraComponent.h"
 #include "NiagaraComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "SpaceShipPlayerStateInterface.h"
+#include "GameFramework/PlayerState.h"
 
 USpaceShipMovementComponent::USpaceShipMovementComponent()
 {
@@ -46,7 +48,7 @@ void USpaceShipMovementComponent::BeginPlay()
 void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    
+
     UpdateForwardInputSmoothedTimer(DeltaTime);
     UpdateVelocity(DeltaTime);
     UpdateMovementEffects(DeltaTime);
@@ -59,8 +61,12 @@ void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
 
 void USpaceShipMovementComponent::RechargeFuel()
 {
-    CurrentFuelLevel = MaxFuel;
-    OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
+    SetCurrentFuelLevel(MaxFuel);
+}
+
+void USpaceShipMovementComponent::SetPlayerState(APlayerState* InPlayerState)
+{
+    PlayerState = Cast<ISpaceShipPlayerStateInterface>(InPlayerState);
 }
 
 void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
@@ -81,19 +87,15 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
             if (SpaceShipVelocity.SquaredLength() > CurrentMaxSpeed * CurrentMaxSpeed)
                 SpaceShipVelocity = SpaceShipVelocity.GetSafeNormal() * CurrentMaxSpeed;
 
-            CurrentFuelLevel = FMath::Max(0,
-                CurrentFuelLevel - (CurrentMovementVector.Y > 0 ? FuelDecreaseSpeedForward : FuelDecreaseSpeed) * DeltaTime);
-            OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
+            SetCurrentFuelLevel(FMath::Max(0,
+                CurrentFuelLevel - (CurrentMovementVector.Y > 0 ? FuelDecreaseSpeedForward : FuelDecreaseSpeed) * DeltaTime));
         }
 
         if (bDecreaseVelocity && CurrentFuelLevel > 0)
         {
             SpaceShipVelocity = FMath::VInterpTo(SpaceShipVelocity, FVector::ZeroVector, DeltaTime, 1);
             if (SpaceShipVelocity.SquaredLength() > 25)
-            {
-                CurrentFuelLevel = FMath::Max(0, CurrentFuelLevel - FuelDecreaseSpeed * DeltaTime);
-                OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
-            }
+                SetCurrentFuelLevel(FMath::Max(0, CurrentFuelLevel - FuelDecreaseSpeed * DeltaTime));
         }
 
         Owner->AddActorWorldOffset(SpaceShipVelocity);
@@ -164,6 +166,17 @@ void USpaceShipMovementComponent::UpdateForwardInputSmoothedTimer(float DeltaTim
         ForwardInputSmoothedTimer = FMath::Min(ForwardInputSmoothedMaxDuration, ForwardInputSmoothedTimer + DeltaTime);
     else
         ForwardInputSmoothedTimer = FMath::Max(0, ForwardInputSmoothedTimer - DeltaTime * ForwardInputSmoothedDecaySpeed);
+}
+
+void USpaceShipMovementComponent::SetCurrentFuelLevel(float InCurrentFuelLevel)
+{
+    CurrentFuelLevel = InCurrentFuelLevel;
+    if (PlayerState && Owner->HasAuthority())
+    {
+        PlayerState->SetFuelLevel(CurrentFuelLevel);
+        PlayerState->OnRep_FuelLevel();
+    }
+    OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
 }
 
 void USpaceShipMovementComponent::UpdateFireRockets()

@@ -7,6 +7,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraComponent;
+class ISpaceShipPlayerStateInterface;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFuelLevelUpdated, float, InCurrentFuelLevel);
 
@@ -70,6 +71,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
     FOnFuelLevelUpdated OnFuelLevelUpdated;
 
     APawn* Owner = nullptr;
+    ISpaceShipPlayerStateInterface* PlayerState = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
     USpringArmComponent* SpaceShipSpringArmComponent = nullptr;
     UCameraComponent* SpaceShipCameraComponent = nullptr;
@@ -88,6 +90,8 @@ public:
     void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
     void RechargeFuel();
 
+    void SetPlayerState(APlayerState* InPlayerState);
+
 private:
     void UpdateVelocity(float DeltaTime);
     void UpdateMovementEffects(float DeltaTime);
@@ -95,6 +99,7 @@ private:
     void UpdateSpaceShipRotation(float DeltaTime);
     void UpdateCameraSocketOffset(float DeltaTime);
     void UpdateForwardInputSmoothedTimer(float DeltaTime);
+    void SetCurrentFuelLevel(float InCurrentFuelLevel);
 
 protected:
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

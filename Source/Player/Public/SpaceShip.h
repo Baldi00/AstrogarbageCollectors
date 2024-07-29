@@ -89,6 +89,7 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent) override;
+    virtual void PossessedBy(AController* NewController) override;
 
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
@@ -103,9 +104,9 @@ public:
     UFUNCTION(Server, Unreliable)
     void Server_DecreaseVelocity(bool bInDecreaseVelocity);
     UFUNCTION(Server, Reliable)
-    void Server_ShootLaserRays(FRotator BulletsRotation, USpaceShipShootingComponent* Shooter);
+    void Server_ShootLaserRays(FRotator BulletsRotation);
     UFUNCTION(Server, Reliable)
-    void Server_ShootDestroyDecomposer(FRotator BulletRotation, USpaceShipShootingComponent* Shooter);
+    void Server_ShootDestroyDecomposer(FRotator BulletRotation);
 
     void Recharge();
 

@@ -7,6 +7,7 @@
 class USceneComponent;
 class ALaserRayBullet;
 class ADestroyDecomposerBullet;
+class ISpaceShipPlayerStateInterface;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoUpdated, int32, InCurrentLaserRayAmmo, int32, InCurrentDestroyDecomposerAmmo);
 
@@ -31,6 +32,8 @@ class SHOOTING_API USpaceShipShootingComponent : public UActorComponent
 	int32 CurrentLaserRayAmmo = 0;
 	int32 CurrentDestroyDecomposerAmmo = 0;
 
+	APawn* Owner = nullptr;
+	ISpaceShipPlayerStateInterface* PlayerState = nullptr;
 	USceneComponent* LeftLaserRaySceneComponent = nullptr;
 	USceneComponent* RightLaserRaySceneComponent = nullptr;
 	USceneComponent* CentralDestroyDecomposerSceneComponent = nullptr;
@@ -43,8 +46,12 @@ protected:
 
 public:
 	void SetShootingSceneComponents(USceneComponent* Left, USceneComponent* Center, USceneComponent* Right);
-	void ShootLaserRays(FRotator BulletsRotation, USpaceShipShootingComponent* Shooter);
-	void ShootDestroyDecomposer(FRotator BulletRotation, USpaceShipShootingComponent* Shooter);
+	void ShootLaserRays(FRotator BulletsRotation);
+	void ShootDestroyDecomposer(FRotator BulletRotation);
 
 	void Recharge();
+	void SetPlayerState(APlayerState* InPlayerState);
+
+private:
+	void UpdateAmmoCount(int32 InCurrentLaserRayAmmo, int32 InCurrentDestroyDecomposerAmmo);
 };
