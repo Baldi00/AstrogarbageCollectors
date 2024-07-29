@@ -1,7 +1,7 @@
 #pragma once
 
 #define STRF(...) FString::Printf(L ## __VA_ARGS__)
-#define LOG(ToLog) UABLog::Log(ToLog, __LINE__, FString(__FUNCTION__));
+#define LOG(ToLog) UABLog::Log(ToLog, __LINE__, FString(__FUNCTION__))
 #define LOGF(...) LOG(STRF(__VA_ARGS__))
 
 class ABUTILS_API UABLog
