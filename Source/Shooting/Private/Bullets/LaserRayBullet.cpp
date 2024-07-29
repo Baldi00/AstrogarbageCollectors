@@ -22,5 +22,8 @@ void ALaserRayBullet::OnCollisionHappened()
 
     if (HitActor->ActorHasTag("Asteroid"))
         if (IAsteroidInterface* Asteroid = Cast<IAsteroidInterface>(HitActor))
+        {
             Asteroid->DestroyAsteroid();
+            Destroy();
+        }
 }
