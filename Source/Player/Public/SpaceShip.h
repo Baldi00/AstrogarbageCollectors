@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Rechargeable.h"
 #include "SpaceShip.generated.h"
 
 class USphereComponent;
@@ -18,7 +19,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class PLAYER_API ASpaceShip : public APawn
+class PLAYER_API ASpaceShip : public APawn, public IRechargeable
 {
     GENERATED_BODY()
 
@@ -108,7 +109,7 @@ public:
     UFUNCTION(Server, Reliable)
     void Server_ShootDestroyDecomposer(FRotator BulletRotation);
 
-    void Recharge();
+    virtual void Recharge() override;
 
 protected:
     UFUNCTION()

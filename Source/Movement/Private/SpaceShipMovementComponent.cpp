@@ -42,7 +42,7 @@ void USpaceShipMovementComponent::BeginPlay()
 
     DefaultCameraSocketOffset = SpaceShipSpringArmComponent->SocketOffset.Z;
 
-    RechargeFuel();
+    Recharge();
 }
 
 void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -59,7 +59,7 @@ void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
     Owner->AddActorWorldRotation(FRotator(0, LookVector.X, 0));
 }
 
-void USpaceShipMovementComponent::RechargeFuel()
+void USpaceShipMovementComponent::Recharge()
 {
     SetCurrentFuelLevel(MaxFuel);
 }

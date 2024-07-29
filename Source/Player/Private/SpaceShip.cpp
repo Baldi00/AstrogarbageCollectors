@@ -254,7 +254,7 @@ void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRot
 
 void ASpaceShip::Recharge()
 {
-    MovementComponent->RechargeFuel();
+    MovementComponent->Recharge();
     ShootingComponent->Recharge();
 }
 

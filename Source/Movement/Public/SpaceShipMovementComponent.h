@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/MovementComponent.h"
+#include "Rechargeable.h"
 #include "SpaceShipMovementComponent.generated.h"
 
 class USpringArmComponent;
@@ -12,7 +13,7 @@ class ISpaceShipPlayerStateInterface;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFuelLevelUpdated, float, InCurrentFuelLevel);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent
+class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, public IRechargeable
 {
     GENERATED_BODY()
 
@@ -88,7 +89,7 @@ public:
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
     void Rotate(const FVector2D& LookVector);
     void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
-    void RechargeFuel();
+    virtual void Recharge() override;
 
     void SetPlayerState(APlayerState* InPlayerState);
 

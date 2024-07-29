@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Rechargeable.h"
 #include "SpaceShipShootingComponent.generated.h"
 
 class USceneComponent;
@@ -12,7 +13,7 @@ class ISpaceShipPlayerStateInterface;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoUpdated, int32, InCurrentLaserRayAmmo, int32, InCurrentDestroyDecomposerAmmo);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SHOOTING_API USpaceShipShootingComponent : public UActorComponent
+class SHOOTING_API USpaceShipShootingComponent : public UActorComponent, public IRechargeable
 {
 	GENERATED_BODY()
 
@@ -49,7 +50,7 @@ public:
 	void ShootLaserRays(FRotator BulletsRotation);
 	void ShootDestroyDecomposer(FRotator BulletRotation);
 
-	void Recharge();
+	virtual void Recharge() override;
 	void SetPlayerState(APlayerState* InPlayerState);
 
 private:

@@ -1,6 +1,6 @@
 #include "Checkpoint.h"
 #include "Components/SphereComponent.h"
-//#include "SpaceShip.h"
+#include "Rechargeable.h"
 
 ACheckpoint::ACheckpoint()
 {
@@ -17,9 +17,6 @@ void ACheckpoint::RechargeSpaceShip(UPrimitiveComponent* OverlappedComp, AActor*
     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     if (Other->ActorHasTag("SpaceShip"))
-    {
-        // Recharge
-    }
-    //if (ASpaceShip* SpaceShip = Cast<ASpaceShip>(Other))
-    //    SpaceShip->Recharge();
+        if (IRechargeable* Rechargeable = Cast<IRechargeable>(Other))
+            Rechargeable->Recharge();
 }
