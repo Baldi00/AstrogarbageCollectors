@@ -8,7 +8,7 @@ public class HittableObjects : ModuleRules
 		PublicIncludePaths.AddRange(new string[] { });
 		PrivateIncludePaths.AddRange(new string[] { });
 		PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-		PrivateDependencyModuleNames.AddRange(new string[] {"CoreUObject", "Engine", "ABUtils" });
+		PrivateDependencyModuleNames.AddRange(new string[] {"CoreUObject", "Engine", "ABUtils", "Common" });
 		DynamicallyLoadedModuleNames.AddRange(new string[] { });
 	}
 }

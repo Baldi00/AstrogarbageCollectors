@@ -8,7 +8,7 @@ public class Movement : ModuleRules
 		PublicIncludePaths.AddRange(new string[] { });
 		PrivateIncludePaths.AddRange(new string[] { } );
         PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Niagara", "ABUtils" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Niagara", "ABUtils", "Common" });
         DynamicallyLoadedModuleNames.AddRange(new string[] { });
 	}
 }

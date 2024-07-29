@@ -8,7 +8,7 @@ public class Player : ModuleRules
         PublicIncludePaths.AddRange(new string[] { });
         PrivateIncludePaths.AddRange(new string[] { });
         PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Movement", "ABUtils", "Shooting", "EnhancedInput", "Niagara" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Common", "ABUtils", "Movement", "Shooting", "EnhancedInput", "Niagara" });
         DynamicallyLoadedModuleNames.AddRange(new string[] { });
 	}
 }

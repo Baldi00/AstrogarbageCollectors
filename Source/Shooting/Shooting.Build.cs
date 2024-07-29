@@ -8,7 +8,7 @@ public class Shooting : ModuleRules
         PublicIncludePaths.AddRange(new string[] { });
         PrivateIncludePaths.AddRange(new string[] { });
         PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "ABUtils", "HittableObjects" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Common", "ABUtils", "HittableObjects" });
         DynamicallyLoadedModuleNames.AddRange(new string[] { });
 	}
 }
