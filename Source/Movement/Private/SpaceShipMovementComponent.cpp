@@ -179,13 +179,17 @@ void USpaceShipMovementComponent::UpdateForwardInputSmoothedTimer(float DeltaTim
 
 void USpaceShipMovementComponent::SetCurrentFuelLevel(float InCurrentFuelLevel)
 {
-    CurrentFuelLevel = InCurrentFuelLevel;
-    if (PlayerState && Owner->HasAuthority())
+    if (Owner->HasAuthority())
     {
-        PlayerState->SetFuelLevel(CurrentFuelLevel);
-        PlayerState->OnRep_FuelLevel();
+        CurrentFuelLevel = InCurrentFuelLevel;
+        OnRep_CurrentFuelLevel();
+
+        if (PlayerState)
+        {
+            PlayerState->SetFuelLevel(CurrentFuelLevel);
+            PlayerState->OnRep_FuelLevel();
+        }
     }
-    OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
 }
 
 void USpaceShipMovementComponent::UpdateFireRockets()
@@ -208,4 +212,10 @@ void USpaceShipMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimePro
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(USpaceShipMovementComponent, CurrentMovementVector);
     DOREPLIFETIME(USpaceShipMovementComponent, ForwardInputSmoothedTimer);
+    DOREPLIFETIME_CONDITION_NOTIFY(USpaceShipMovementComponent, CurrentFuelLevel, COND_None, REPNOTIFY_OnChanged);
+}
+
+void USpaceShipMovementComponent::OnRep_CurrentFuelLevel()
+{
+    OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
 }

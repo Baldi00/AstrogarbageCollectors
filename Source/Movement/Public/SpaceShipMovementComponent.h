@@ -66,6 +66,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
 
     bool bDecreaseVelocity = false;
 
+    UPROPERTY(Replicated, ReplicatedUsing = "OnRep_CurrentFuelLevel")
     float CurrentFuelLevel = 0;
 
     UPROPERTY(BlueprintAssignable)
@@ -94,6 +95,7 @@ public:
     virtual void Recharge() override;
 
     void SetPlayerState(APlayerState* InPlayerState);
+    float GetCurrentFuelLevel() const { return CurrentFuelLevel; }
 
 private:
     void UpdateVelocity(float DeltaTime);
@@ -106,4 +108,7 @@ private:
 
 protected:
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+    UFUNCTION()
+    void OnRep_CurrentFuelLevel();
 };

@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USpaceShipMovementComponent;
 class USpaceShipShootingComponent;
+class USpaceShipRechargerComponent;
 class UNiagaraComponent;
 class USceneComponent;
 
@@ -40,6 +41,9 @@ class PLAYER_API ASpaceShip : public APawn, public IRechargeable
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<USpaceShipShootingComponent> ShootingComponent;
+
+    UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USpaceShipRechargerComponent> RechargerComponent;
 
     UPROPERTY(Category = SpaceShip, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UNiagaraComponent> FireRocketComponent1;
@@ -114,8 +118,12 @@ public:
     void Server_ShootDestroyDecomposer(FRotator BulletRotation);
     UFUNCTION(Server, Reliable)
     void Server_Relocate();
+    UFUNCTION(Server, Reliable)
+    void Server_Recharge();
 
     virtual void Recharge() override;
+
+    USpaceShipMovementComponent* GetSpaceShipMovementComponent() const { return MovementComponent; }
 
 protected:
     UFUNCTION()

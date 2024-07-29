@@ -2,6 +2,7 @@
 
 #include "SpaceShipMovementComponent.h"
 #include "SpaceShipShootingComponent.h"
+#include "SpaceShipRechargerComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -63,6 +64,9 @@ ASpaceShip::ASpaceShip()
 
     MovementComponent = CreateDefaultSubobject<USpaceShipMovementComponent>(TEXT("Movement"));
     ShootingComponent = CreateDefaultSubobject<USpaceShipShootingComponent>(TEXT("Shooting"));
+    RechargerComponent = CreateDefaultSubobject<USpaceShipRechargerComponent>(TEXT("Recharger"));
+
+    RechargerComponent->SetupAttachment(RootComponent);
 
     bUseControllerRotationYaw = false;
 
@@ -266,10 +270,21 @@ void ASpaceShip::Server_Relocate_Implementation()
     MovementComponent->Relocate();
 }
 
-void ASpaceShip::Recharge()
+void ASpaceShip::Server_Recharge_Implementation()
 {
     MovementComponent->Recharge();
     ShootingComponent->Recharge();
+}
+
+void ASpaceShip::Recharge()
+{
+    if (HasAuthority())
+    {
+        MovementComponent->Recharge();
+        ShootingComponent->Recharge();
+    }
+    else
+        Server_Recharge();
 }
 
 void ASpaceShip::OnRep_ActorLocation()

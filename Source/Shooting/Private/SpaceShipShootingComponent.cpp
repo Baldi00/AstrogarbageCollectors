@@ -3,10 +3,12 @@
 #include "Bullets/DestroyDecomposerBullet.h"
 #include "SpaceShipPlayerStateInterface.h"
 #include "GameFramework/PlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 USpaceShipShootingComponent::USpaceShipShootingComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
+    SetIsReplicatedByDefault(true);
 }
 
 void USpaceShipShootingComponent::BeginPlay()
@@ -17,6 +19,23 @@ void USpaceShipShootingComponent::BeginPlay()
     ensureMsgf(Owner != nullptr, TEXT("USpaceShipShootingComponent::BeginPlay, Owning actor isn't of type APawn"));
 
     Recharge();
+}
+
+void USpaceShipShootingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME_CONDITION_NOTIFY(USpaceShipShootingComponent, CurrentLaserRayAmmo, COND_None, REPNOTIFY_OnChanged);
+    DOREPLIFETIME_CONDITION_NOTIFY(USpaceShipShootingComponent, CurrentDestroyDecomposerAmmo, COND_None, REPNOTIFY_OnChanged);
+}
+
+void USpaceShipShootingComponent::OnRep_CurrentLaserRayAmmo()
+{
+    OnAmmoUpdated.Broadcast(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo);
+}
+
+void USpaceShipShootingComponent::OnRep_CurrentDestroyDecomposerAmmo()
+{
+    OnAmmoUpdated.Broadcast(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo);
 }
 
 void USpaceShipShootingComponent::SetShootingSceneComponents(USceneComponent* Left, USceneComponent* Center, USceneComponent* Right)
@@ -40,8 +59,8 @@ void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
 
         LaserRayBullet1->AddCollisionIgnoredActor(Owner);
         LaserRayBullet2->AddCollisionIgnoredActor(Owner);
+        UpdateAmmoCount(CurrentLaserRayAmmo - 2, CurrentDestroyDecomposerAmmo);
     }
-    UpdateAmmoCount(CurrentLaserRayAmmo - 2, CurrentDestroyDecomposerAmmo);
 }
 
 void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation)
@@ -55,13 +74,14 @@ void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation
             CentralDestroyDecomposerSceneComponent->GetComponentLocation(), BulletRotation);
 
         DestroyDecomposerBullet->AddCollisionIgnoredActor(Owner);
+        UpdateAmmoCount(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo - 1);
     }
-    UpdateAmmoCount(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo - 1);
 }
 
 void USpaceShipShootingComponent::Recharge()
 {
-    UpdateAmmoCount(MaxLaserRayAmmo, MaxDestroyDecomposerAmmo);
+    if (Owner->HasAuthority())
+        UpdateAmmoCount(MaxLaserRayAmmo, MaxDestroyDecomposerAmmo);
 }
 
 void USpaceShipShootingComponent::SetPlayerState(APlayerState* InPlayerState)
@@ -71,19 +91,20 @@ void USpaceShipShootingComponent::SetPlayerState(APlayerState* InPlayerState)
 
 void USpaceShipShootingComponent::UpdateAmmoCount(int32 InCurrentLaserRayAmmo, int32 InCurrentDestroyDecomposerAmmo)
 {
-    CurrentLaserRayAmmo = InCurrentLaserRayAmmo;
-    CurrentDestroyDecomposerAmmo = InCurrentDestroyDecomposerAmmo;
-
-    if (PlayerState)
+    if (Owner->HasAuthority())
     {
-        PlayerState->SetLaserRayAmmo(CurrentLaserRayAmmo);
-        PlayerState->SetDestroyDecomposerAmmo(CurrentDestroyDecomposerAmmo);
-        if (Owner->HasAuthority())
+        CurrentLaserRayAmmo = InCurrentLaserRayAmmo;
+        CurrentDestroyDecomposerAmmo = InCurrentDestroyDecomposerAmmo;
+
+        OnRep_CurrentLaserRayAmmo();
+        OnRep_CurrentDestroyDecomposerAmmo();
+
+        if (PlayerState)
         {
+            PlayerState->SetLaserRayAmmo(CurrentLaserRayAmmo);
+            PlayerState->SetDestroyDecomposerAmmo(CurrentDestroyDecomposerAmmo);
             PlayerState->OnRep_LaserRayAmmo();
             PlayerState->OnRep_DestroyDecomposerAmmo();
         }
     }
-
-    OnAmmoUpdated.Broadcast(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo);
 }
