@@ -29,7 +29,8 @@ void ABlackHole::OnBlackHoleAnimationEnded()
 {
     if (HasAuthority())
     {
-        HitActor->Destroy();
+        if (IsValid(HitActor))
+            HitActor->Destroy();
         Destroy();
     }
 }
