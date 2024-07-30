@@ -107,6 +107,12 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
         }
 
         Owner->AddActorWorldOffset(SpaceShipVelocity);
+
+        if (Owner->HasAuthority() && PlayerState)
+        {
+            PlayerState->SetPlayerLocation(Owner->GetActorLocation());
+            PlayerState->OnRep_PlayerLocation();
+        }
     }
 }
 

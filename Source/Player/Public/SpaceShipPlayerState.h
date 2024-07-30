@@ -23,18 +23,23 @@ class PLAYER_API ASpaceShipPlayerState : public APlayerState, public ISpaceShipP
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_SatellitesDestroyed", meta = (AllowPrivateAccess = "true"))
     int32 SatellitesDestroyed = 0;
 
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_PlayerLocation", meta = (AllowPrivateAccess = "true"))
+    FVector PlayerLocation;
+
 public:
     virtual void SetFuelLevel(float InFuelLevel) override { FuelLevel = InFuelLevel; }
     virtual void SetLaserRayAmmo(int32 InLaserRayAmmo) override { LaserRayAmmo = InLaserRayAmmo; }
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) override { DestroyDecomposerAmmo = InDestroyDecomposerAmmo; }
     virtual void IncreaseAsteroidsDestroyed() override { AsteroidsDestroyed++; }
     virtual void IncreaseSatellitesDestroyed() override { SatellitesDestroyed++; }
+    virtual void SetPlayerLocation(const FVector& InPlayerLocation) override { PlayerLocation = InPlayerLocation; }
 
     virtual float GetFuelLevel() const override { return FuelLevel; }
     virtual int32 GetLaserRayAmmo() const override { return LaserRayAmmo; }
     virtual int32 GetDestroyDecomposerAmmo() const override { return DestroyDecomposerAmmo; }
     virtual int32 GetAsteroidsDestroyed() const override { return AsteroidsDestroyed; }
     virtual int32 GetSatellitesDestroyed() const override { return SatellitesDestroyed; }
+    virtual const FVector& GetPlayerLocation() const override { return PlayerLocation; }
 
     UFUNCTION()
     virtual void OnRep_FuelLevel() override;
@@ -46,6 +51,8 @@ public:
     virtual void OnRep_AsteroidsDestroyed() override;
     UFUNCTION()
     virtual void OnRep_SatellitesDestroyed() override;
+    UFUNCTION()
+    virtual void OnRep_PlayerLocation() override;
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
