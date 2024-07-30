@@ -34,13 +34,22 @@ void ABlackHole::OnBlackHoleAnimationEnded()
         if (IsValid(HitActor))
             HitActor->Destroy();
 
-        if (HasAuthority())
+        if (APawn* OwnerPawn = Cast<APawn>(GetOwner()))
         {
-            if (APawn* OwnerPawn = Cast<APawn>(GetOwner()))
+            ISpaceShipPlayerStateInterface* PlayerState = Cast<ISpaceShipPlayerStateInterface>(OwnerPawn->GetPlayerState());
+
+            if (!PlayerState)
+                return;
+
+            if (HitActor->ActorHasTag("Satellite"))
             {
-                ISpaceShipPlayerStateInterface* PlayerState = Cast<ISpaceShipPlayerStateInterface>(OwnerPawn->GetPlayerState());
                 PlayerState->IncreaseSatellitesDestroyed();
                 PlayerState->OnRep_SatellitesDestroyed();
+            }
+            else if (HitActor->ActorHasTag("Asteroid"))
+            {
+                PlayerState->IncreaseAsteroidsDestroyed();
+                PlayerState->OnRep_AsteroidsDestroyed();
             }
         }
 
