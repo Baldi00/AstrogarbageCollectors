@@ -148,13 +148,17 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputCompone
     }
 }
 
-void ASpaceShip::PossessedBy(AController* NewController)
+void ASpaceShip::Restart()
 {
-    Super::PossessedBy(NewController);
+    Super::Restart();
+    MovementComponent->OnPossess();
+    ShootingComponent->OnPossess();
+
     if (HasAuthority())
     {
         MovementComponent->SetPlayerState(GetPlayerState());
         ShootingComponent->SetPlayerState(GetPlayerState());
+        Recharge();
     }
 }
 

@@ -12,23 +12,21 @@ USpaceShipMovementComponent::USpaceShipMovementComponent()
     SetIsReplicatedByDefault(true);
 }
 
-void USpaceShipMovementComponent::BeginPlay()
+void USpaceShipMovementComponent::OnPossess()
 {
-    Super::BeginPlay();
-
     Owner = Cast<APawn>(GetOwner());
-    ensureMsgf(Owner != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Owning actor isn't of type APawn"));
+    ensureMsgf(Owner != nullptr, TEXT("USpaceShipMovementComponent::OnPossess, Owning actor isn't of type APawn"));
 
-    SpaceShipMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
-    ensureMsgf(SpaceShipMeshComponent != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Unable to find StaticMesh Component on owning Actor"));
+    SpaceShipMeshComponent = Owner->GetComponentByClass<UStaticMeshComponent>();
+    ensureMsgf(SpaceShipMeshComponent != nullptr, TEXT("USpaceShipMovementComponent::OnPossess, Unable to find StaticMesh Component on owning Actor"));
 
-    SpaceShipSpringArmComponent = GetOwner()->GetComponentByClass<USpringArmComponent>();
-    ensureMsgf(SpaceShipSpringArmComponent != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Unable to find SpringArm Component on owning Actor"));
+    SpaceShipSpringArmComponent = Owner->GetComponentByClass<USpringArmComponent>();
+    ensureMsgf(SpaceShipSpringArmComponent != nullptr, TEXT("USpaceShipMovementComponent::OnPossess, Unable to find SpringArm Component on owning Actor"));
 
-    SpaceShipCameraComponent = GetOwner()->GetComponentByClass<UCameraComponent>();
-    ensureMsgf(SpaceShipCameraComponent != nullptr, TEXT("USpaceShipMovementComponent::BeginPlay, Unable to find Camera Component on owning Actor"));
+    SpaceShipCameraComponent = Owner->GetComponentByClass<UCameraComponent>();
+    ensureMsgf(SpaceShipCameraComponent != nullptr, TEXT("USpaceShipMovementComponent::OnPossess, Unable to find Camera Component on owning Actor"));
 
-    TSet<UActorComponent*> Components = GetOwner()->GetComponents();
+    TSet<UActorComponent*> Components = Owner->GetComponents();
     int Index = 0;
     for (UActorComponent* Component : Components)
         if (UNiagaraComponent* NiagaraComponent = Cast<UNiagaraComponent>(Component))
@@ -41,13 +39,14 @@ void USpaceShipMovementComponent::BeginPlay()
             }
 
     DefaultCameraSocketOffset = SpaceShipSpringArmComponent->SocketOffset.Z;
-
-    Recharge();
 }
 
 void USpaceShipMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    if (!Owner)
+        return;
 
     UpdateForwardInputSmoothedTimer(DeltaTime);
     UpdateVelocity(DeltaTime);
@@ -179,6 +178,9 @@ void USpaceShipMovementComponent::UpdateForwardInputSmoothedTimer(float DeltaTim
 
 void USpaceShipMovementComponent::SetCurrentFuelLevel(float InCurrentFuelLevel)
 {
+    if (!Owner)
+        return;
+
     if (Owner->HasAuthority())
     {
         CurrentFuelLevel = InCurrentFuelLevel;

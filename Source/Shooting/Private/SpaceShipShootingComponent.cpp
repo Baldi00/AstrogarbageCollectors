@@ -11,14 +11,10 @@ USpaceShipShootingComponent::USpaceShipShootingComponent()
     SetIsReplicatedByDefault(true);
 }
 
-void USpaceShipShootingComponent::BeginPlay()
+void USpaceShipShootingComponent::OnPossess()
 {
-    Super::BeginPlay();
-
     Owner = Cast<APawn>(GetOwner());
-    ensureMsgf(Owner != nullptr, TEXT("USpaceShipShootingComponent::BeginPlay, Owning actor isn't of type APawn"));
-
-    Recharge();
+    ensureMsgf(Owner != nullptr, TEXT("USpaceShipShootingComponent::OnPossess, Owning actor isn't of type APawn"));
 }
 
 void USpaceShipShootingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -83,6 +79,9 @@ void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation
 
 void USpaceShipShootingComponent::Recharge()
 {
+    if (!Owner)
+        return;
+
     if (Owner->HasAuthority())
         UpdateAmmoCount(MaxLaserRayAmmo, MaxDestroyDecomposerAmmo);
 }
@@ -94,6 +93,9 @@ void USpaceShipShootingComponent::SetPlayerState(APlayerState* InPlayerState)
 
 void USpaceShipShootingComponent::UpdateAmmoCount(int32 InCurrentLaserRayAmmo, int32 InCurrentDestroyDecomposerAmmo)
 {
+    if (!Owner)
+        return;
+
     if (Owner->HasAuthority())
     {
         CurrentLaserRayAmmo = InCurrentLaserRayAmmo;

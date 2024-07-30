@@ -11,12 +11,12 @@ class PLAYER_API ASpaceShipPlayerState : public APlayerState, public ISpaceShipP
     GENERATED_BODY()
 
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_FuelLevel", meta = (AllowPrivateAccess = "true"))
-    float FuelLevel = 100;
+    float FuelLevel = 0;
 
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_LaserRayAmmo", meta = (AllowPrivateAccess = "true"))
-    int32 LaserRayAmmo = 30;
+    int32 LaserRayAmmo = 0;
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_DestroyDecomposerAmmo", meta = (AllowPrivateAccess = "true"))
-    int32 DestroyDecomposerAmmo = 8;
+    int32 DestroyDecomposerAmmo = 0;
 
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_AsteroidsDestroyed", meta = (AllowPrivateAccess = "true"))
     int32 AsteroidsDestroyed = 0;

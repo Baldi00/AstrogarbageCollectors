@@ -97,7 +97,7 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent) override;
-    virtual void PossessedBy(AController* NewController) override;
+    virtual void Restart() override;
 
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);

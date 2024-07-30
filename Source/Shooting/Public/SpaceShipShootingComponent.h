@@ -30,9 +30,9 @@ class SHOOTING_API USpaceShipShootingComponent : public UActorComponent, public 
 	UPROPERTY(BlueprintAssignable)
 	FOnAmmoUpdated OnAmmoUpdated;
 
-	UPROPERTY(Replicated, ReplicatedUsing = "OnRep_CurrentLaserRayAmmo")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, ReplicatedUsing = "OnRep_CurrentLaserRayAmmo", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentLaserRayAmmo = 0;
-	UPROPERTY(Replicated, ReplicatedUsing = "OnRep_CurrentDestroyDecomposerAmmo")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, ReplicatedUsing = "OnRep_CurrentDestroyDecomposerAmmo", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentDestroyDecomposerAmmo = 0;
 
 	APawn* Owner = nullptr;
@@ -45,7 +45,6 @@ public:
 	USpaceShipShootingComponent();
 
 protected:
-	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
@@ -54,6 +53,7 @@ protected:
 	void OnRep_CurrentDestroyDecomposerAmmo();
 
 public:
+	void OnPossess();
 	void SetShootingSceneComponents(USceneComponent* Left, USceneComponent* Center, USceneComponent* Right);
 	void ShootLaserRays(FRotator BulletsRotation);
 	void ShootDestroyDecomposer(FRotator BulletRotation);

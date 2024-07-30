@@ -66,7 +66,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
 
     bool bDecreaseVelocity = false;
 
-    UPROPERTY(Replicated, ReplicatedUsing = "OnRep_CurrentFuelLevel")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, ReplicatedUsing = "OnRep_CurrentFuelLevel", meta = (AllowPrivateAccess = "true"))
     float CurrentFuelLevel = 0;
 
     UPROPERTY(BlueprintAssignable)
@@ -84,7 +84,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
 public:
     USpaceShipMovementComponent();
 
-    virtual void BeginPlay() override;
+    void OnPossess();
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
