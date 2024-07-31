@@ -1,7 +1,6 @@
 #include "AGCGameState.h"
 #include "ABLog.h"
 #include "Net/UnrealNetwork.h"
-#include <Kismet/KismetSystemLibrary.h>
 
 AAGCGameState::AAGCGameState()
 {

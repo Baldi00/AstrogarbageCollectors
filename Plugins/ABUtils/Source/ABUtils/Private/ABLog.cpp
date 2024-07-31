@@ -1,29 +1,63 @@
 #include "ABLog.h"
-#include "Kismet/KismetSystemLibrary.h"
 
-void UABLog::Log(UObject* WorldContexObject, FString String, int32 Line, FString FunctionName)
+void UABLog::Log(UObject* WorldContextObject, FString String, int32 Line, FString FunctionName)
 {
-    UKismetSystemLibrary::PrintString(WorldContexObject, String, true, false);
-    FString ToPrintLogger = FunctionName + "(" + FString::FromInt(Line) + "): " + String;
+	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+	FString ClientOrServerDebugString;
+	if (World && World->WorldType == EWorldType::PIE && World->GetNetMode() != NM_Standalone)
+		ClientOrServerDebugString = GetClientOrServerDebugString(World) + ": ";
+    
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, ClientOrServerDebugString + String);
+    FString ToPrintLogger = ClientOrServerDebugString + FunctionName + "(" + FString::FromInt(Line) + "): " + String;
     UE_LOG(LogTemp, Warning, TEXT("%s"), *ToPrintLogger);
 }
 
-void UABLog::Log(UObject* WorldContexObject, const char* String, int32 Line, FString FunctionName)
+void UABLog::Log(UObject* WorldContextObject, const char* String, int32 Line, FString FunctionName)
 {
-    Log(WorldContexObject, FString(String), Line, FunctionName);
+    Log(WorldContextObject, FString(String), Line, FunctionName);
 }
 
-void UABLog::Log(UObject* WorldContexObject, int32 Value, int32 Line, FString FunctionName)
+void UABLog::Log(UObject* WorldContextObject, int32 Value, int32 Line, FString FunctionName)
 {
-    Log(WorldContexObject, FString::FromInt(Value), Line, FunctionName);
+    Log(WorldContextObject, FString::FromInt(Value), Line, FunctionName);
 }
 
-void UABLog::Log(UObject* WorldContexObject, float Value, int32 Line, FString FunctionName)
+void UABLog::Log(UObject* WorldContextObject, float Value, int32 Line, FString FunctionName)
 {
-    Log(WorldContexObject, FString::SanitizeFloat(Value), Line, FunctionName);
+    Log(WorldContextObject, FString::SanitizeFloat(Value), Line, FunctionName);
 }
 
-void UABLog::Log(UObject* WorldContexObject, bool bValue, int32 Line, FString FunctionName)
+void UABLog::Log(UObject* WorldContextObject, bool bValue, int32 Line, FString FunctionName)
 {
-    Log(WorldContexObject, bValue ? FString("true") : FString("false"), Line, FunctionName);
+    Log(WorldContextObject, bValue ? FString("true") : FString("false"), Line, FunctionName);
+}
+
+FString UABLog::GetClientOrServerDebugString(UWorld* World)
+{
+	FString NetModeString = NetModeToString(World->GetNetMode());
+	return GPlayInEditorID == 0 ? NetModeString : NetModeString + " " + FString::FromInt(GPlayInEditorID);
+}
+
+FString UABLog::NetModeToString(ENetMode NetMode)
+{
+	switch (NetMode)
+	{
+	case NM_Standalone:
+		return "Standalone";
+		break;
+	case NM_DedicatedServer:
+		return "Dedicated server";
+		break;
+	case NM_ListenServer:
+		return "Server";
+		break;
+	case NM_Client:
+		return "Client";
+		break;
+	case NM_MAX:
+		break;
+	default:
+		break;
+	}
+	return "Error";
 }
