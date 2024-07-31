@@ -1,5 +1,4 @@
 #include "AGCGameState.h"
-#include "ABLog.h"
 #include "Net/UnrealNetwork.h"
 
 AAGCGameState::AAGCGameState()
@@ -11,7 +10,7 @@ FString AAGCGameState::GetTimerString() const
 {
     int32 Minutes = CurrentTimer / 60;
     int32 Seconds = (int32)CurrentTimer % 60;
-    return STRF("%d:%02d", Minutes, Seconds);
+    return FString::Printf(TEXT("%d:%02d"), Minutes, Seconds);
 }
 
 void AAGCGameState::BeginPlay()
