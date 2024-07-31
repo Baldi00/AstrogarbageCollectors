@@ -1,12 +1,12 @@
 #pragma once
 
 #define STRF(...) FString::Printf(L ## __VA_ARGS__)
-#define LOG(ToLog) UABLog::Log(this, ToLog, __LINE__, FString(__FUNCTION__))
+#define LOG(ToLog) UABDebug::Log(this, ToLog, __LINE__, FString(__FUNCTION__))
 #define LOGF(...) LOG(STRF(__VA_ARGS__))
 
-#define CLIENT_OR_SERVER_DEBUG FString ClientOrServerDebug = UABLog::GetClientOrServerDebugString(GetWorld())
+#define CLIENT_OR_SERVER_DEBUG FString ClientOrServerDebug = UABDebug::GetClientOrServerDebugString(GetWorld())
 
-class ABUTILS_API UABLog
+class ABUTILS_API UABDebug
 {
 public:
 	static void Log(UObject* WorldContextObject, FString String, int32 Line, FString FunctionName);
