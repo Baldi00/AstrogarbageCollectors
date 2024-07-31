@@ -17,14 +17,14 @@ class AGC_API AAGCGameState : public AGameStateBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float InitialTimer = 120;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnTimerEnded OnTimerEnded;
-
 public:
 	AAGCGameState();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FString GetTimerString();
+	FString GetTimerString() const;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTimerEnded OnTimerEnded;
 
 protected:
 	virtual void BeginPlay() override;

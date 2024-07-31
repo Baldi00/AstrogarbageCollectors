@@ -8,11 +8,11 @@ AAGCGameState::AAGCGameState()
     PrimaryActorTick.bCanEverTick = true;
 }
 
-FString AAGCGameState::GetTimerString()
+FString AAGCGameState::GetTimerString() const
 {
     int32 Minutes = CurrentTimer / 60;
     int32 Seconds = (int32)CurrentTimer % 60;
-    return { STRF("%d:%02d", Minutes, Seconds) };
+    return STRF("%d:%02d", Minutes, Seconds);
 }
 
 void AAGCGameState::BeginPlay()

@@ -8,7 +8,7 @@ public class UI : ModuleRules
         PublicIncludePaths.AddRange(new string[] { });
         PrivateIncludePaths.AddRange(new string[] { });
         PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Movement", "Shooting", "AGC", "Player" });
         DynamicallyLoadedModuleNames.AddRange(new string[] { });
     }
 }

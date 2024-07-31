@@ -69,9 +69,6 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, ReplicatedUsing = "OnRep_CurrentFuelLevel", meta = (AllowPrivateAccess = "true"))
     float CurrentFuelLevel = 0;
 
-    UPROPERTY(BlueprintAssignable)
-    FOnFuelLevelUpdated OnFuelLevelUpdated;
-
     APawn* Owner = nullptr;
     ISpaceShipPlayerStateInterface* PlayerState = nullptr;
     UStaticMeshComponent* SpaceShipMeshComponent = nullptr;
@@ -111,4 +108,8 @@ protected:
 
     UFUNCTION()
     void OnRep_CurrentFuelLevel();
+
+public:
+    UPROPERTY(BlueprintAssignable)
+    FOnFuelLevelUpdated OnFuelLevelUpdated;
 };

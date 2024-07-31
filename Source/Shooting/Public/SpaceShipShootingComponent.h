@@ -27,9 +27,6 @@ class SHOOTING_API USpaceShipShootingComponent : public UActorComponent, public 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammo", meta = (AllowPrivateAccess = "true"))
 	int32 MaxDestroyDecomposerAmmo = 8;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnAmmoUpdated OnAmmoUpdated;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, ReplicatedUsing = "OnRep_CurrentLaserRayAmmo", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentLaserRayAmmo = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, ReplicatedUsing = "OnRep_CurrentDestroyDecomposerAmmo", meta = (AllowPrivateAccess = "true"))
@@ -63,4 +60,11 @@ public:
 
 private:
 	void UpdateAmmoCount(int32 InCurrentLaserRayAmmo, int32 InCurrentDestroyDecomposerAmmo);
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnAmmoUpdated OnAmmoUpdated;
+
+	int32 GetLaserRayAmmoCount() { return CurrentLaserRayAmmo; }
+	int32 GetDestroyDecomposerAmmoCount() { return CurrentDestroyDecomposerAmmo; }
 };
