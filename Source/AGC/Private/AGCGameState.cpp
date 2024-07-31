@@ -36,3 +36,9 @@ void AAGCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(AAGCGameState, CurrentTimer);
 }
+
+void AAGCGameState::AddPlayerState(APlayerState* NewPlayerState)
+{
+    Super::AddPlayerState(NewPlayerState);
+    OnPlayerStateAdded.Broadcast();
+}
