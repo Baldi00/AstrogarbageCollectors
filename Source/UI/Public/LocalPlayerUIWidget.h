@@ -49,7 +49,8 @@ protected:
 	void SetBindings();
 	void ResetBindings();
 
-	void SetPlayerStateBinding();
+	UFUNCTION()
+	void SetPlayerStateBinding(APlayerState* InPlayerState);
 
 private:
 	UFUNCTION()

@@ -309,3 +309,9 @@ void ASpaceShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
     DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorLocation, COND_None, REPNOTIFY_OnChanged);
     DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorRotation, COND_None, REPNOTIFY_OnChanged);
 }
+
+void ASpaceShip::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
+{
+    Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
+    OnPlayerStateReceived.Broadcast(NewPlayerState);
+}

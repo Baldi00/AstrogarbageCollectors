@@ -30,8 +30,6 @@ void ULocalPlayerUIWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
     Super::NativeTick(MyGeometry, InDeltaTime);
     if (GameState.IsValid())
         UpdateTimer(GameState->GetTimerString());
-    if (!PlayerState.IsValid())
-        SetPlayerStateBinding();
 }
 
 void ULocalPlayerUIWidget::SetBindings()
@@ -48,8 +46,10 @@ void ULocalPlayerUIWidget::SetBindings()
 
     MovementComponent->OnFuelLevelUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateFuelBar);
     ShootingComponent->OnAmmoUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateAmmoCount);
-
-    SetPlayerStateBinding();
+    
+    if(ASpaceShip* SpaceShipPawn = Cast<ASpaceShip>(Pawn))
+        SpaceShipPawn->OnPlayerStateReceived.AddUniqueDynamic(this, &ULocalPlayerUIWidget::SetPlayerStateBinding);
+    SetPlayerStateBinding(GetOwningPlayerPawn()->GetPlayerState());
 }
 
 void ULocalPlayerUIWidget::ResetBindings()
@@ -72,11 +72,20 @@ void ULocalPlayerUIWidget::ResetBindings()
     }
     if (GameState.IsValid())
         GameState.Reset();
+
+    if (ASpaceShip* SpaceShipPawn = Cast<ASpaceShip>(GetOwningPlayerPawn()))
+        SpaceShipPawn->OnPlayerStateReceived.RemoveDynamic(this, &ULocalPlayerUIWidget::SetPlayerStateBinding);
 }
 
-void ULocalPlayerUIWidget::SetPlayerStateBinding()
+void ULocalPlayerUIWidget::SetPlayerStateBinding(APlayerState* InPlayerState)
 {
-    PlayerState = MakeWeakObjectPtr(Cast<ASpaceShipPlayerState>(GetOwningPlayerPawn()->GetPlayerState()));
+    if (!InPlayerState)
+        return;
+
+    if (PlayerState.IsValid())
+        return;
+
+    PlayerState = MakeWeakObjectPtr(Cast<ASpaceShipPlayerState>(InPlayerState));
     if (PlayerState.IsValid())
     {
         PlayerState->OnDestroyedAsteroidsCountUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateDestroyedAsteroidsCount);

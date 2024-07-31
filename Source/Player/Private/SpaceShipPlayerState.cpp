@@ -14,24 +14,30 @@ void ASpaceShipPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 
 void ASpaceShipPlayerState::OnRep_FuelLevel()
 {
+    OnPlayerStateFuelLevelUpdated.Broadcast(FuelLevel);
 }
 
 void ASpaceShipPlayerState::OnRep_LaserRayAmmo()
 {
+    OnLaserRayAmmoUpdated.Broadcast(LaserRayAmmo);
 }
 
 void ASpaceShipPlayerState::OnRep_DestroyDecomposerAmmo()
 {
+    OnDestroyDecomposerAmmoUpdated.Broadcast(DestroyDecomposerAmmo);
 }
 
 void ASpaceShipPlayerState::OnRep_AsteroidsDestroyed()
 {
+    OnDestroyedAsteroidsCountUpdated.Broadcast(AsteroidsDestroyed);
 }
 
 void ASpaceShipPlayerState::OnRep_SatellitesDestroyed()
 {
+    OnDestroyedSatellitesCountUpdated.Broadcast(SatellitesDestroyed);
 }
 
 void ASpaceShipPlayerState::OnRep_PlayerLocation()
 {
+    OnPlayerLocationUpdated.Broadcast(PlayerLocation);
 }

@@ -5,6 +5,9 @@
 #include "SpaceShipPlayerStateInterface.h"
 #include "SpaceShipPlayerState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStateFuelLevelUpdated, float, InCurrentFuelLevel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLaserRayAmmoUpdated, int32, InCurrentLaserRayAmmo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDestroyDecomposerAmmoUpdated, int32, InCurrentDestroyDecomposerAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDestroyedAsteroidsCountUpdated, int32, InCurrentDestroyedAsteroidsCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDestroyedSatellitesCountUpdated, int32, InCurrentDestroyedSatellitesCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerLocationUpdated, FVector, InCurrentPlayerLocation);
@@ -31,9 +34,9 @@ class PLAYER_API ASpaceShipPlayerState : public APlayerState, public ISpaceShipP
     FVector PlayerLocation;
 
 public:
-    virtual void SetFuelLevel(float InFuelLevel) override { FuelLevel = InFuelLevel; }
-    virtual void SetLaserRayAmmo(int32 InLaserRayAmmo) override { LaserRayAmmo = InLaserRayAmmo; }
-    virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) override { DestroyDecomposerAmmo = InDestroyDecomposerAmmo; }
+    virtual void SetFuelLevel(float InFuelLevel) override { FuelLevel = InFuelLevel; OnPlayerStateFuelLevelUpdated.Broadcast(FuelLevel); }
+    virtual void SetLaserRayAmmo(int32 InLaserRayAmmo) override { LaserRayAmmo = InLaserRayAmmo; OnLaserRayAmmoUpdated.Broadcast(LaserRayAmmo); }
+    virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) override { DestroyDecomposerAmmo = InDestroyDecomposerAmmo; OnDestroyDecomposerAmmoUpdated.Broadcast(DestroyDecomposerAmmo); }
     virtual void IncreaseAsteroidsDestroyed() override { AsteroidsDestroyed++; OnDestroyedAsteroidsCountUpdated.Broadcast(AsteroidsDestroyed); }
     virtual void IncreaseSatellitesDestroyed() override { SatellitesDestroyed++; OnDestroyedSatellitesCountUpdated.Broadcast(SatellitesDestroyed); }
     virtual void SetPlayerLocation(const FVector& InPlayerLocation) override { PlayerLocation = InPlayerLocation; OnPlayerLocationUpdated.Broadcast(PlayerLocation); }
@@ -60,6 +63,12 @@ public:
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+    UPROPERTY(BlueprintAssignable)
+    FOnPlayerStateFuelLevelUpdated OnPlayerStateFuelLevelUpdated;
+    UPROPERTY(BlueprintAssignable)
+    FOnLaserRayAmmoUpdated OnLaserRayAmmoUpdated;
+    UPROPERTY(BlueprintAssignable)
+    FOnDestroyDecomposerAmmoUpdated OnDestroyDecomposerAmmoUpdated;
     UPROPERTY(BlueprintAssignable)
     FOnDestroyedAsteroidsCountUpdated OnDestroyedAsteroidsCountUpdated;
     UPROPERTY(BlueprintAssignable)

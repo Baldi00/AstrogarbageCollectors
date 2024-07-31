@@ -19,6 +19,8 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStateReceived, APlayerState*, PlayerState);
+
 UCLASS()
 class PLAYER_API ASpaceShip : public APawn, public IRechargeable
 {
@@ -125,6 +127,8 @@ public:
 
     USpaceShipMovementComponent* GetSpaceShipMovementComponent() const { return MovementComponent; }
 
+    FOnPlayerStateReceived OnPlayerStateReceived;
+
 protected:
     UFUNCTION()
     void OnRep_ActorLocation();
@@ -132,4 +136,6 @@ protected:
     void OnRep_ActorRotation();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+    virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
 };
