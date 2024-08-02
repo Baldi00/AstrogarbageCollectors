@@ -17,6 +17,9 @@ class UI_API ULocalPlayerUIWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidget), DisplayName = "Player Name")
+	TObjectPtr<UTextBlock> PlayerName = nullptr;
+
 	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidget), DisplayName = "Fuel Bar")
 	TObjectPtr<UProgressBar> FuelBar = nullptr;
 
@@ -53,6 +56,8 @@ protected:
 	void SetPlayerStateBinding(APlayerState* InPlayerState);
 
 private:
+	UFUNCTION()
+	void UpdatePlayerName(FString InPlayerName);
 	UFUNCTION()
 	void UpdateFuelBar(float InCurrentFuelLevel);
 	void UpdateTimer(const FString& InCurrentTimerString);

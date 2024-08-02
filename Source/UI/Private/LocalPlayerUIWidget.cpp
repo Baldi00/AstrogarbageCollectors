@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "AGCGameInstance.h"
 
 void ULocalPlayerUIWidget::NativeConstruct()
 {
@@ -17,6 +18,9 @@ void ULocalPlayerUIWidget::NativeConstruct()
         UpdateFuelBar(MovementComponent->GetCurrentFuelLevel());
     if (ShootingComponent.IsValid())
         UpdateAmmoCount(ShootingComponent->GetLaserRayAmmoCount(), ShootingComponent->GetDestroyDecomposerAmmoCount());
+
+    if (UAGCGameInstance* GameInstance = Cast<UAGCGameInstance>(UGameplayStatics::GetGameInstance(this)))
+        UpdatePlayerName(GameInstance->PlayerName);
 }
 
 void ULocalPlayerUIWidget::NativeDestruct()
@@ -46,8 +50,8 @@ void ULocalPlayerUIWidget::SetBindings()
 
     MovementComponent->OnFuelLevelUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateFuelBar);
     ShootingComponent->OnAmmoUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateAmmoCount);
-    
-    if(ASpaceShip* SpaceShipPawn = Cast<ASpaceShip>(Pawn))
+
+    if (ASpaceShip* SpaceShipPawn = Cast<ASpaceShip>(Pawn))
         SpaceShipPawn->OnPlayerStateReceived.AddUniqueDynamic(this, &ULocalPlayerUIWidget::SetPlayerStateBinding);
     SetPlayerStateBinding(GetOwningPlayerPawn()->GetPlayerState());
 }
@@ -91,6 +95,11 @@ void ULocalPlayerUIWidget::SetPlayerStateBinding(APlayerState* InPlayerState)
         PlayerState->OnDestroyedAsteroidsCountUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateDestroyedAsteroidsCount);
         PlayerState->OnDestroyedSatellitesCountUpdated.AddUniqueDynamic(this, &ULocalPlayerUIWidget::UpdateDestroyedSatellitesCount);
     }
+}
+
+void ULocalPlayerUIWidget::UpdatePlayerName(FString InPlayerName)
+{
+    PlayerName->SetText(FText::FromString(InPlayerName));
 }
 
 void ULocalPlayerUIWidget::UpdateFuelBar(float InCurrentFuelLevel)
