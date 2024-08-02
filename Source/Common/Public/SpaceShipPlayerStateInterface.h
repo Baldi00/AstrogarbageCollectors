@@ -15,6 +15,7 @@ class COMMON_API ISpaceShipPlayerStateInterface
     GENERATED_BODY()
 
 public:
+    virtual void SetSpaceShipName(FString InSpaceShipName) = 0;
     virtual void SetFuelLevel(float InFuelLevel) = 0;
     virtual void SetLaserRayAmmo(int32 InLaserRayAmmo) = 0;
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) = 0;
@@ -22,6 +23,7 @@ public:
     virtual void IncreaseSatellitesDestroyed() = 0;
     virtual void SetPlayerLocation(const FVector& InPlayerLocation) = 0;
 
+    virtual FString GetSpaceShipName() const = 0;
     virtual float GetFuelLevel() const = 0;
     virtual int32 GetLaserRayAmmo() const = 0;
     virtual int32 GetDestroyDecomposerAmmo() const = 0;
@@ -29,6 +31,8 @@ public:
     virtual int32 GetSatellitesDestroyed() const = 0;
     virtual const FVector& GetPlayerLocation() const = 0;
 
+    UFUNCTION()
+    virtual void OnRep_SpaceShipName() = 0;
     UFUNCTION()
     virtual void OnRep_FuelLevel() = 0;
     UFUNCTION()

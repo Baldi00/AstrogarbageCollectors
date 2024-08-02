@@ -40,11 +40,12 @@ protected:
 
 public:
 	void SetPlayerState(APlayerState* InPlayerState);
-	void SetPlayerName(FString InPlayerName);
 	void SetBindings();
 	void ResetBindings();
 
 private:
+	UFUNCTION()
+	void UpdatePlayerName(FString InPlayerName);
 	UFUNCTION()
 	void UpdateFuelBar(float InCurrentFuelLevel);
 	UFUNCTION()

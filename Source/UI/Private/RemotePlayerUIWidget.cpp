@@ -13,24 +13,21 @@ void URemotePlayerUIWidget::NativeDestruct()
 void URemotePlayerUIWidget::SetPlayerState(APlayerState* InPlayerState)
 {
     PlayerState = MakeWeakObjectPtr(Cast<ASpaceShipPlayerState>(InPlayerState));
-    SetBindings();
-}
 
-void URemotePlayerUIWidget::SetPlayerName(FString InPlayerName)
-{
-    PlayerName->SetText(FText::FromString(InPlayerName));
-
+    UpdatePlayerName(PlayerState->GetSpaceShipName());
     UpdateFuelBar(PlayerState->GetFuelLevel());
     UpdateLaserRayAmmoCount(PlayerState->GetLaserRayAmmo());
     UpdateDestroyDecomposerAmmoCount(PlayerState->GetDestroyDecomposerAmmo());
     UpdateDestroyedAsteroidsCount(PlayerState->GetAsteroidsDestroyed());
     UpdateDestroyedSatellitesCount(PlayerState->GetSatellitesDestroyed());
+    SetBindings();
 }
 
 void URemotePlayerUIWidget::SetBindings()
 {
     ResetBindings();
 
+    PlayerState->OnSpaceShipNameUpdated.AddUniqueDynamic(this, &URemotePlayerUIWidget::UpdatePlayerName);
     PlayerState->OnPlayerStateFuelLevelUpdated.AddUniqueDynamic(this, &URemotePlayerUIWidget::UpdateFuelBar);
     PlayerState->OnLaserRayAmmoUpdated.AddUniqueDynamic(this, &URemotePlayerUIWidget::UpdateLaserRayAmmoCount);
     PlayerState->OnDestroyDecomposerAmmoUpdated.AddUniqueDynamic(this, &URemotePlayerUIWidget::UpdateDestroyDecomposerAmmoCount);
@@ -42,12 +39,18 @@ void URemotePlayerUIWidget::ResetBindings()
 {
     if (PlayerState.IsValid())
     {
+        PlayerState->OnSpaceShipNameUpdated.RemoveDynamic(this, &URemotePlayerUIWidget::UpdatePlayerName);
         PlayerState->OnPlayerStateFuelLevelUpdated.RemoveDynamic(this, &URemotePlayerUIWidget::UpdateFuelBar);
         PlayerState->OnLaserRayAmmoUpdated.RemoveDynamic(this, &URemotePlayerUIWidget::UpdateLaserRayAmmoCount);
         PlayerState->OnDestroyDecomposerAmmoUpdated.RemoveDynamic(this, &URemotePlayerUIWidget::UpdateDestroyDecomposerAmmoCount);
         PlayerState->OnDestroyedAsteroidsCountUpdated.RemoveDynamic(this, &URemotePlayerUIWidget::UpdateDestroyedAsteroidsCount);
         PlayerState->OnDestroyedSatellitesCountUpdated.RemoveDynamic(this, &URemotePlayerUIWidget::UpdateDestroyedSatellitesCount);
     }
+}
+
+void URemotePlayerUIWidget::UpdatePlayerName(FString InPlayerName)
+{
+    PlayerName->SetText(FText::FromString(InPlayerName));
 }
 
 void URemotePlayerUIWidget::UpdateFuelBar(float InCurrentFuelLevel)

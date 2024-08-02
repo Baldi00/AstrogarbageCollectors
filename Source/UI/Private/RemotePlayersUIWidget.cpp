@@ -42,7 +42,6 @@ void URemotePlayersUIWidget::RecreateRemotePlayerStatesList()
         URemotePlayerUIWidget* RemotePlayerWidget = CreateWidget<URemotePlayerUIWidget>(GetOwningPlayer(), RemotePlayerUIClass);
         RemotePlayerWidget->SetPadding(FMargin(0, 0, 0, VerticalBoxSpacing));
         RemotePlayerWidget->SetPlayerState(PlayerStates[i]);
-        RemotePlayerWidget->SetPlayerName(FString::Printf(TEXT("Player %d"), Count));
         VerticalBox->AddChildToVerticalBox(RemotePlayerWidget);
         Count++;
     }
