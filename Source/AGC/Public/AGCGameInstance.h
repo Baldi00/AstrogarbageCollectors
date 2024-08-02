@@ -30,6 +30,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnSessionNotFound OnSessionNotFound;
 
+	UPROPERTY(BlueprintReadWrite)
+	FString PlayerName;
+
 private:
 	UPROPERTY(EditAnywhere)
 	TSoftObjectPtr<UWorld> LobbyMap;
