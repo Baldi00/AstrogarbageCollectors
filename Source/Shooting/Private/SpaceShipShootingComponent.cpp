@@ -43,11 +43,11 @@ void USpaceShipShootingComponent::SetShootingSceneComponents(USceneComponent* Le
 
 void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
 {
+    if (CurrentLaserRayAmmo < 2)
+        return;
+
     if (Owner->HasAuthority())
     {
-        if (CurrentLaserRayAmmo < 2)
-            return;
-
         ALaserRayBullet* LaserRayBullet1 = GetWorld()->SpawnActor<ALaserRayBullet>(LaserRayBulletClass,
             LeftLaserRaySceneComponent->GetComponentLocation(), BulletsRotation);
         ALaserRayBullet* LaserRayBullet2 = GetWorld()->SpawnActor<ALaserRayBullet>(LaserRayBulletClass,
@@ -59,15 +59,17 @@ void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
         LaserRayBullet2->SetOwner(Owner);
         UpdateAmmoCount(CurrentLaserRayAmmo - 2, CurrentDestroyDecomposerAmmo);
     }
+
+    OnLaserRaysShooted.Broadcast();
 }
 
 void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation)
 {
+    if (CurrentDestroyDecomposerAmmo <= 0)
+        return;
+
     if (Owner->HasAuthority())
     {
-        if (CurrentDestroyDecomposerAmmo <= 0)
-            return;
-
         ADestroyDecomposerBullet* DestroyDecomposerBullet = GetWorld()->SpawnActor<ADestroyDecomposerBullet>(DestroyDecomposerBulletClass,
             CentralDestroyDecomposerSceneComponent->GetComponentLocation(), BulletRotation);
 
@@ -75,6 +77,8 @@ void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation
         DestroyDecomposerBullet->SetOwner(Owner);
         UpdateAmmoCount(CurrentLaserRayAmmo, CurrentDestroyDecomposerAmmo - 1);
     }
+
+    OnDestroyDecomposerShooted.Broadcast();
 }
 
 void USpaceShipShootingComponent::Recharge()

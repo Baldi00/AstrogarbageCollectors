@@ -11,6 +11,8 @@ class ADestroyDecomposerBullet;
 class ISpaceShipPlayerStateInterface;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoUpdated, int32, InCurrentLaserRayAmmo, int32, InCurrentDestroyDecomposerAmmo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLaserRaysShooted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDestroyDecomposerShooted);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTING_API USpaceShipShootingComponent : public UActorComponent, public IRechargeable
@@ -64,6 +66,10 @@ private:
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAmmoUpdated OnAmmoUpdated;
+	UPROPERTY(BlueprintAssignable)
+	FOnLaserRaysShooted OnLaserRaysShooted;
+	UPROPERTY(BlueprintAssignable)
+	FOnDestroyDecomposerShooted OnDestroyDecomposerShooted;
 
 	int32 GetLaserRayAmmoCount() { return CurrentLaserRayAmmo; }
 	int32 GetDestroyDecomposerAmmoCount() { return CurrentDestroyDecomposerAmmo; }
