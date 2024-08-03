@@ -289,6 +289,8 @@ void ASpaceShip::Recharge()
     }
     else
         Server_Recharge();
+
+    SpawnRechargeVFX();
 }
 
 void ASpaceShip::OnRep_ActorLocation()

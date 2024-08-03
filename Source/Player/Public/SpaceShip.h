@@ -125,6 +125,9 @@ public:
 
     virtual void Recharge() override;
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void SpawnRechargeVFX();
+
     USpaceShipMovementComponent* GetSpaceShipMovementComponent() const { return MovementComponent; }
 
     FOnPlayerStateReceived OnPlayerStateReceived;
