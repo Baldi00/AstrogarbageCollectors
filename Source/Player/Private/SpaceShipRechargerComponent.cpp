@@ -6,10 +6,22 @@
 USpaceShipRechargerComponent::USpaceShipRechargerComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
+}
 
-    static FName SphereColliderCollisionProfileName = TEXT("OverlapAll");
-    SetCollisionProfileName(SphereColliderCollisionProfileName);
-    OnComponentBeginOverlap.AddUniqueDynamic(this, &USpaceShipRechargerComponent::OnOverlapActor);
+void USpaceShipRechargerComponent::BeginPlay()
+{
+    Super::BeginPlay();
+
+    static FName OverlapAllProfile = TEXT("OverlapAll");
+    static FName NoCollisionProfile = TEXT("NoCollision");
+
+    if (APawn* Pawn = Cast<APawn>(GetOwner()); Pawn && Pawn->IsLocallyControlled())
+    {
+        SetCollisionProfileName(OverlapAllProfile);
+        OnComponentBeginOverlap.AddUniqueDynamic(this, &USpaceShipRechargerComponent::OnOverlapActor);
+    }
+    else
+        SetCollisionProfileName(NoCollisionProfile);
 }
 
 void USpaceShipRechargerComponent::OnOverlapActor(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp,
