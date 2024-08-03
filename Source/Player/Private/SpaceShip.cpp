@@ -122,6 +122,8 @@ void ASpaceShip::Tick(float DeltaTime)
         ActorLocation = GetActorLocation();
         ActorRotation = GetActorRotation();
     }
+
+    CanRechargeTimer = FMath::Max(0, CanRechargeTimer - DeltaTime);
 }
 
 void ASpaceShip::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent)
@@ -282,6 +284,11 @@ void ASpaceShip::Server_Recharge_Implementation()
 
 void ASpaceShip::Recharge()
 {
+    if (CanRechargeTimer > 0)
+        return;
+
+    CanRechargeTimer = CanRechargeCooldown;
+
     if (HasAuthority())
     {
         MovementComponent->Recharge();
@@ -291,6 +298,7 @@ void ASpaceShip::Recharge()
         Server_Recharge();
 
     SpawnRechargeVFX();
+    PlayRechargeSound();
 }
 
 void ASpaceShip::OnRep_ActorLocation()

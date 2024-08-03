@@ -93,6 +93,10 @@ class PLAYER_API ASpaceShip : public APawn, public IRechargeable
 
     APlayerCameraManager* PlayerCameraManager;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = SpaceShip, meta = (AllowPrivateAccess = "true"))
+    float CanRechargeCooldown = 2;
+    float CanRechargeTimer = 0;
+
 public:
     ASpaceShip();
 
@@ -127,6 +131,8 @@ public:
 
     UFUNCTION(BlueprintImplementableEvent)
     void SpawnRechargeVFX();
+    UFUNCTION(BlueprintImplementableEvent)
+    void PlayRechargeSound();
 
     USpaceShipMovementComponent* GetSpaceShipMovementComponent() const { return MovementComponent; }
 
@@ -141,4 +147,5 @@ protected:
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
+
 };
