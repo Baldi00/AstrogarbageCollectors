@@ -31,7 +31,7 @@ public:
 	FOnSessionNotFound OnSessionNotFound;
 
 	UPROPERTY(BlueprintReadWrite)
-	FString PlayerName;
+	FString PlayerName = "Player";
 
 private:
 	UPROPERTY(EditAnywhere)
