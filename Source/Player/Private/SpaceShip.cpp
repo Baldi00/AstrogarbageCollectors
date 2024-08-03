@@ -21,7 +21,7 @@ ASpaceShip::ASpaceShip()
     PrimaryActorTick.bCanEverTick = true;
     Tags.AddUnique("SpaceShip");
 
-    NetCullDistanceSquared = 150000 * 150000;
+    bAlwaysRelevant = true;
 
     SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 

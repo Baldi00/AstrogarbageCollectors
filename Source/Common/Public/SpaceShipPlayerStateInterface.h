@@ -21,7 +21,6 @@ public:
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) = 0;
     virtual void IncreaseAsteroidsDestroyed() = 0;
     virtual void IncreaseSatellitesDestroyed() = 0;
-    virtual void SetPlayerLocation(const FVector& InPlayerLocation) = 0;
 
     virtual FString GetSpaceShipName() const = 0;
     virtual float GetFuelLevel() const = 0;
@@ -29,7 +28,6 @@ public:
     virtual int32 GetDestroyDecomposerAmmo() const = 0;
     virtual int32 GetAsteroidsDestroyed() const = 0;
     virtual int32 GetSatellitesDestroyed() const = 0;
-    virtual const FVector& GetPlayerLocation() const = 0;
 
     UFUNCTION()
     virtual void OnRep_SpaceShipName() = 0;
@@ -43,6 +41,4 @@ public:
     virtual void OnRep_AsteroidsDestroyed() = 0;
     UFUNCTION()
     virtual void OnRep_SatellitesDestroyed() = 0;
-    UFUNCTION()
-    virtual void OnRep_PlayerLocation() = 0;
 };
