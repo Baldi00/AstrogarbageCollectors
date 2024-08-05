@@ -34,17 +34,27 @@ void USpaceShipRechargerComponent::OnOverlapActor(UPrimitiveComponent* Overlappe
     }
     else if (Other->ActorHasTag("SpaceShip"))
     {
-        ASpaceShip* SpaceShip = Cast<ASpaceShip>(Other);
-        if (!SpaceShip)
+        ASpaceShip* OtherSpaceShip = Cast<ASpaceShip>(Other);
+        if (!OtherSpaceShip)
             return;
-        USpaceShipMovementComponent* MovementComponent = SpaceShip->GetSpaceShipMovementComponent();
-        if (!MovementComponent)
+        USpaceShipMovementComponent* OtherMovementComponent = OtherSpaceShip->GetSpaceShipMovementComponent();
+        if (!OtherMovementComponent)
             return;
-        if (MovementComponent->GetCurrentFuelLevel() <= 0)
+        if (OtherMovementComponent->GetCurrentFuelLevel() <= 0)
         {
             if (IRechargeable* Rechargeable = Cast<IRechargeable>(GetOwner()))
                 Rechargeable->Recharge();
-            if (IRechargeable* Rechargeable = Cast<IRechargeable>(Other))
+        }
+
+        ASpaceShip* MySpaceShip = Cast<ASpaceShip>(GetOwner());
+        if (!MySpaceShip)
+            return;
+        USpaceShipMovementComponent* MyMovementComponent = MySpaceShip->GetSpaceShipMovementComponent();
+        if (!MyMovementComponent)
+            return;
+        if (MyMovementComponent->GetCurrentFuelLevel() <= 0)
+        {
+            if (IRechargeable* Rechargeable = Cast<IRechargeable>(GetOwner()))
                 Rechargeable->Recharge();
         }
     }

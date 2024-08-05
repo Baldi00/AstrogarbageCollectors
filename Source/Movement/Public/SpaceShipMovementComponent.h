@@ -12,6 +12,8 @@ class ISpaceShipPlayerStateInterface;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFuelLevelUpdated, float, InCurrentFuelLevel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFuelLow);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFuelEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFuelRecharged);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, public IRechargeable
@@ -84,6 +86,8 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
     UNiagaraComponent* FireRocketComponent2 = nullptr;
     UNiagaraComponent* FireRocketComponent3 = nullptr;
     bool bAlreadyWarnedAboutFuelLow = false;
+    bool bAlreadyWarnedAboutFuelEnded = false;
+    bool bAlreadyWarnedAboutFuelRecharged = true;
 
 public:
     USpaceShipMovementComponent();
@@ -128,4 +132,8 @@ public:
     FOnFuelLevelUpdated OnFuelLevelUpdated;
     UPROPERTY(BlueprintAssignable)
     FOnFuelLow OnFuelLow;
+    UPROPERTY(BlueprintAssignable)
+    FOnFuelEnded OnFuelEnded;
+    UPROPERTY(BlueprintAssignable)
+    FOnFuelRecharged OnFuelRecharged;
 };

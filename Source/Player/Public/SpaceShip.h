@@ -142,6 +142,8 @@ public:
     USpaceShipMovementComponent* GetSpaceShipMovementComponent() const { return MovementComponent; }
 
     FOnPlayerStateReceived OnPlayerStateReceived;
+
+    UPROPERTY(BlueprintAssignable)
     FOnRecharged OnRecharged;
 
 protected:

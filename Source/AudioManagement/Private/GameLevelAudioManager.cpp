@@ -48,7 +48,10 @@ void AGameLevelAudioManager::SetBindings()
 
         MovementComponent = SpaceShip->GetComponentByClass<USpaceShipMovementComponent>();
         if (MovementComponent)
+        {
             MovementComponent->OnFuelLow.AddUniqueDynamic(this, &AGameLevelAudioManager::PlayAlarmSound);
+            MovementComponent->OnFuelEnded.AddUniqueDynamic(this, &AGameLevelAudioManager::PlayAlarmSound);
+        }
     }
 
     ASpaceShipPlayerState* PlayerState = Cast<ASpaceShipPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
@@ -77,7 +80,10 @@ void AGameLevelAudioManager::ResetBindings()
         }
 
         if (MovementComponent)
+        {
             MovementComponent->OnFuelLow.RemoveDynamic(this, &AGameLevelAudioManager::PlayAlarmSound);
+            MovementComponent->OnFuelEnded.AddUniqueDynamic(this, &AGameLevelAudioManager::PlayAlarmSound);
+        }
     }
 
     ASpaceShipPlayerState* PlayerState = Cast<ASpaceShipPlayerState>(UGameplayStatics::GetPlayerState(this, 0));

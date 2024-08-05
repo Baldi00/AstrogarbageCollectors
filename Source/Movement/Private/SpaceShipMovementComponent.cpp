@@ -71,6 +71,7 @@ void USpaceShipMovementComponent::Recharge()
 {
     SetCurrentFuelLevel(MaxFuel);
     bAlreadyWarnedAboutFuelLow = false;
+    bAlreadyWarnedAboutFuelEnded = false;
 }
 
 void USpaceShipMovementComponent::SetPlayerState(APlayerState* InPlayerState)
@@ -196,12 +197,6 @@ void USpaceShipMovementComponent::SetCurrentFuelLevel(float InCurrentFuelLevel)
             PlayerState->OnRep_FuelLevel();
         }
     }
-
-    if (CurrentFuelLevel < FuelLowThreshold && !bAlreadyWarnedAboutFuelLow)
-    {
-        bAlreadyWarnedAboutFuelLow = true;
-        OnFuelLow.Broadcast();
-    }
 }
 
 void USpaceShipMovementComponent::UpdateFireRockets()
@@ -231,6 +226,25 @@ void USpaceShipMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimePro
 void USpaceShipMovementComponent::OnRep_CurrentFuelLevel()
 {
     OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
+
+    if (CurrentFuelLevel < FuelLowThreshold && !bAlreadyWarnedAboutFuelLow)
+    {
+        bAlreadyWarnedAboutFuelLow = true;
+        bAlreadyWarnedAboutFuelRecharged = false;
+        OnFuelLow.Broadcast();
+    }
+
+    if (CurrentFuelLevel <= 0 && !bAlreadyWarnedAboutFuelEnded)
+    {
+        bAlreadyWarnedAboutFuelEnded = true;
+        OnFuelEnded.Broadcast();
+    }
+
+    if (CurrentFuelLevel >= MaxFuel && !bAlreadyWarnedAboutFuelRecharged)
+    {
+        bAlreadyWarnedAboutFuelEnded = true;
+        OnFuelRecharged.Broadcast();
+    }
 }
 
 void USpaceShipMovementComponent::OnRep_ServerSpaceShipVelocity()
