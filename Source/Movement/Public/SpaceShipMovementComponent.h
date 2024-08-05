@@ -11,6 +11,7 @@ class UNiagaraComponent;
 class ISpaceShipPlayerStateInterface;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFuelLevelUpdated, float, InCurrentFuelLevel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFuelLow);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, public IRechargeable
@@ -28,6 +29,9 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
     float MaxFuel = 100;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
+    float FuelLowThreshold = 30;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
     float FuelDecreaseSpeed = 2;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fuel", meta = (AllowPrivateAccess = "true"))
@@ -77,6 +81,7 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
     UNiagaraComponent* FireRocketComponent1 = nullptr;
     UNiagaraComponent* FireRocketComponent2 = nullptr;
     UNiagaraComponent* FireRocketComponent3 = nullptr;
+    bool bAlreadyWarnedAboutFuelLow = false;
 
 public:
     USpaceShipMovementComponent();
@@ -93,6 +98,11 @@ public:
 
     void SetPlayerState(APlayerState* InPlayerState);
     float GetCurrentFuelLevel() const { return CurrentFuelLevel; }
+    FVector GetSpaceShipVelocity() const { return SpaceShipVelocity; }
+    float GetMaxSpeedForward() const { return MaxSpeedForward; }
+    float GetForwardInputSmoothedPercentage() const { return ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration; }
+    FVector GetCurrentMovementVector() const { return CurrentMovementVector; }
+    bool ShouldDecreaseVelocity() const { return bDecreaseVelocity; }
 
 private:
     void UpdateVelocity(float DeltaTime);
@@ -112,4 +122,6 @@ protected:
 public:
     UPROPERTY(BlueprintAssignable)
     FOnFuelLevelUpdated OnFuelLevelUpdated;
+    UPROPERTY(BlueprintAssignable)
+    FOnFuelLow OnFuelLow;
 };

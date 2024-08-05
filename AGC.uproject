@@ -47,6 +47,14 @@
 			"AdditionalDependencies": [
 				"UMG"
 			]
+		},
+		{
+			"Name": "AudioManagement",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [

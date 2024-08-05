@@ -20,6 +20,7 @@ class UInputAction;
 struct FInputActionValue;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStateReceived, APlayerState*, PlayerState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRecharged);
 
 UCLASS()
 class PLAYER_API ASpaceShip : public APawn, public IRechargeable
@@ -131,12 +132,11 @@ public:
 
     UFUNCTION(BlueprintImplementableEvent)
     void SpawnRechargeVFX();
-    UFUNCTION(BlueprintImplementableEvent)
-    void PlayRechargeSound();
 
     USpaceShipMovementComponent* GetSpaceShipMovementComponent() const { return MovementComponent; }
 
     FOnPlayerStateReceived OnPlayerStateReceived;
+    FOnRecharged OnRecharged;
 
 protected:
     UFUNCTION()

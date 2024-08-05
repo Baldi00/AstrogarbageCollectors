@@ -44,7 +44,10 @@ void USpaceShipShootingComponent::SetShootingSceneComponents(USceneComponent* Le
 void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
 {
     if (CurrentLaserRayAmmo < 2)
+    {
+        OnTryingToShootEmptyAmmo.Broadcast();
         return;
+    }
 
     if (Owner->HasAuthority())
     {
@@ -66,7 +69,10 @@ void USpaceShipShootingComponent::ShootLaserRays(FRotator BulletsRotation)
 void USpaceShipShootingComponent::ShootDestroyDecomposer(FRotator BulletRotation)
 {
     if (CurrentDestroyDecomposerAmmo <= 0)
+    {
+        OnTryingToShootEmptyAmmo.Broadcast();
         return;
+    }
 
     if (Owner->HasAuthority())
     {

@@ -70,6 +70,7 @@ void USpaceShipMovementComponent::Relocate()
 void USpaceShipMovementComponent::Recharge()
 {
     SetCurrentFuelLevel(MaxFuel);
+    bAlreadyWarnedAboutFuelLow = false;
 }
 
 void USpaceShipMovementComponent::SetPlayerState(APlayerState* InPlayerState)
@@ -191,6 +192,12 @@ void USpaceShipMovementComponent::SetCurrentFuelLevel(float InCurrentFuelLevel)
             PlayerState->SetFuelLevel(CurrentFuelLevel);
             PlayerState->OnRep_FuelLevel();
         }
+    }
+
+    if (CurrentFuelLevel < FuelLowThreshold && !bAlreadyWarnedAboutFuelLow)
+    {
+        bAlreadyWarnedAboutFuelLow = true;
+        OnFuelLow.Broadcast();
     }
 }
 

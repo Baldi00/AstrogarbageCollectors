@@ -298,7 +298,7 @@ void ASpaceShip::Recharge()
         Server_Recharge();
 
     SpawnRechargeVFX();
-    PlayRechargeSound();
+    OnRecharged.Broadcast();
 }
 
 void ASpaceShip::OnRep_ActorLocation()

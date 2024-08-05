@@ -13,6 +13,7 @@ class ISpaceShipPlayerStateInterface;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoUpdated, int32, InCurrentLaserRayAmmo, int32, InCurrentDestroyDecomposerAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLaserRaysShooted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDestroyDecomposerShooted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTryingToShootEmptyAmmo);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTING_API USpaceShipShootingComponent : public UActorComponent, public IRechargeable
@@ -70,6 +71,8 @@ public:
 	FOnLaserRaysShooted OnLaserRaysShooted;
 	UPROPERTY(BlueprintAssignable)
 	FOnDestroyDecomposerShooted OnDestroyDecomposerShooted;
+	UPROPERTY(BlueprintAssignable)
+	FOnTryingToShootEmptyAmmo OnTryingToShootEmptyAmmo;
 
 	int32 GetLaserRayAmmoCount() { return CurrentLaserRayAmmo; }
 	int32 GetDestroyDecomposerAmmoCount() { return CurrentDestroyDecomposerAmmo; }
