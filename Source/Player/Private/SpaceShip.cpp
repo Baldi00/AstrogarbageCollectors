@@ -343,7 +343,7 @@ void ASpaceShip::Recharge()
 
 void ASpaceShip::OnRep_ActorLocation()
 {
-    if (!HasAuthority() && (!IsLocallyControlled() || FVector::DistSquared(GetActorLocation(), ActorLocation) > 10000))
+    if (!HasAuthority() && (!IsLocallyControlled() || FVector::DistSquared(GetActorLocation(), ActorLocation) > 5000))
         SetActorLocation(ActorLocation);
 }
 

@@ -235,6 +235,6 @@ void USpaceShipMovementComponent::OnRep_CurrentFuelLevel()
 
 void USpaceShipMovementComponent::OnRep_ServerSpaceShipVelocity()
 {
-    if (FVector::DistSquared(ServerSpaceShipVelocity, SpaceShipVelocity) > 1000)
+    if (FVector::DistSquared(ServerSpaceShipVelocity, SpaceShipVelocity) > 100)
         SpaceShipVelocity = ServerSpaceShipVelocity;
 }
