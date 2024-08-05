@@ -2,11 +2,22 @@
 #include "OnlineSubsystemUtils.h"
 #include "FindSessionsCallbackProxy.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
 #include "ABDebug.h"
 
 UAGCGameInstance::UAGCGameInstance()
 {
     SessionName = FPlatformProcess::ComputerName();
+}
+
+void UAGCGameInstance::Init()
+{
+    Super::Init();
+
+    // Set vsync on
+    UGameUserSettings* Settings = UGameUserSettings::GetGameUserSettings();
+    Settings->SetVSyncEnabled(true);
+    Settings->ApplySettings(true);
 }
 
 void UAGCGameInstance::Host(const int32 Players)

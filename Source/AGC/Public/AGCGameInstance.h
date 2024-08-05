@@ -18,6 +18,8 @@ class AGC_API UAGCGameInstance : public UGameInstance
 public:
 	UAGCGameInstance();
 
+	virtual void Init() override;
+
 	UFUNCTION(BlueprintCallable)
 	void Host(const int32 Players);
 
