@@ -13,6 +13,7 @@ public class AGC : ModuleRules
             "InputCore",
             "ABUtils",
             "Player",
+            "HittableObjects",
             "Common",
             "NetCore",
             "Sockets",
