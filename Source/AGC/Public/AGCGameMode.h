@@ -8,4 +8,8 @@ UCLASS()
 class AGC_API AAGCGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION()
+	void ResetGame();
 };

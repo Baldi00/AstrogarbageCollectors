@@ -58,9 +58,9 @@ void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
     Owner->AddActorWorldRotation(FRotator(0, LookVector.X, 0));
 }
 
-void USpaceShipMovementComponent::Relocate(const FVector& StartingPosition)
+void USpaceShipMovementComponent::Relocate(const FVector& StartingPosition, bool bForceRelocation)
 {
-    if (CurrentFuelLevel <= 0 && (Owner->HasAuthority() || Owner->IsLocallyControlled()))
+    if ((CurrentFuelLevel <= 0 || bForceRelocation) && (Owner->HasAuthority() || Owner->IsLocallyControlled()))
     {
         Owner->SetActorLocation(StartingPosition);
         SpaceShipVelocity = FVector::ZeroVector;
@@ -106,6 +106,9 @@ void USpaceShipMovementComponent::UpdateVelocity(float DeltaTime)
             if (SpaceShipVelocity.SquaredLength() > 25)
                 SetCurrentFuelLevel(FMath::Max(0, CurrentFuelLevel - FuelDecreaseSpeed * DeltaTime));
         }
+
+        if (Owner->HasAuthority())
+            ServerSpaceShipVelocity = SpaceShipVelocity;
 
         Owner->AddActorWorldOffset(SpaceShipVelocity);
     }
@@ -222,9 +225,16 @@ void USpaceShipMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimePro
     DOREPLIFETIME(USpaceShipMovementComponent, CurrentMovementVector);
     DOREPLIFETIME(USpaceShipMovementComponent, ForwardInputSmoothedTimer);
     DOREPLIFETIME_CONDITION_NOTIFY(USpaceShipMovementComponent, CurrentFuelLevel, COND_None, REPNOTIFY_OnChanged);
+    DOREPLIFETIME_CONDITION_NOTIFY(USpaceShipMovementComponent, ServerSpaceShipVelocity, COND_None, REPNOTIFY_OnChanged);
 }
 
 void USpaceShipMovementComponent::OnRep_CurrentFuelLevel()
 {
     OnFuelLevelUpdated.Broadcast(CurrentFuelLevel);
+}
+
+void USpaceShipMovementComponent::OnRep_ServerSpaceShipVelocity()
+{
+    if (FVector::DistSquared(ServerSpaceShipVelocity, SpaceShipVelocity) > 1000)
+        SpaceShipVelocity = ServerSpaceShipVelocity;
 }

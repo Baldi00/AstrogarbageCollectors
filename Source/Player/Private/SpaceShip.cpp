@@ -252,7 +252,7 @@ void ASpaceShip::Relocate(const FInputActionValue& Value)
 
 void ASpaceShip::ResetState()
 {
-    MovementComponent->Relocate(StartingPosition);
+    MovementComponent->Relocate(StartingPosition, true);
     MovementComponent->Recharge();
     ShootingComponent->Recharge();
     if (HasAuthority())
@@ -302,7 +302,7 @@ void ASpaceShip::Server_Relocate_Implementation()
 
 void ASpaceShip::Server_ResetState_Implementation()
 {
-    MovementComponent->Relocate(StartingPosition);
+    MovementComponent->Relocate(StartingPosition, true);
     MovementComponent->Recharge();
     ShootingComponent->Recharge();
 
@@ -356,8 +356,8 @@ void ASpaceShip::OnRep_ActorRotation()
 void ASpaceShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorLocation, COND_None, REPNOTIFY_OnChanged);
-    DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorRotation, COND_None, REPNOTIFY_OnChanged);
+    DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorLocation, COND_None, REPNOTIFY_Always);
+    DOREPLIFETIME_CONDITION_NOTIFY(ASpaceShip, ActorRotation, COND_None, REPNOTIFY_Always);
 }
 
 void ASpaceShip::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)

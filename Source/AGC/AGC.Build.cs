@@ -12,11 +12,13 @@ public class AGC : ModuleRules
             "Engine",
             "InputCore",
             "ABUtils",
+            "Player",
             "Common",
             "NetCore",
             "Sockets",
             "OnlineSubsystem",
-            "OnlineSubsystemUtils"
+            "OnlineSubsystemUtils",
+            "UMG"
         });
         PrivateDependencyModuleNames.AddRange(new string[] { });
     }

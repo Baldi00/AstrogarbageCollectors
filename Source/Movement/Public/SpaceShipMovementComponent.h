@@ -58,6 +58,8 @@ class MOVEMENT_API USpaceShipMovementComponent : public UMovementComponent, publ
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     FVector SpaceShipVelocity = FVector::ZeroVector;
+    UPROPERTY(Replicated, ReplicatedUsing = "OnRep_ServerSpaceShipVelocity")
+    FVector ServerSpaceShipVelocity = FVector::ZeroVector;
 
     UPROPERTY(Replicated)
     FVector CurrentMovementVector = FVector::ZeroVector;
@@ -92,7 +94,7 @@ public:
     void Move(const FVector& MovementVector) { CurrentMovementVector = MovementVector; }
     void Rotate(const FVector2D& LookVector);
     void DecreaseVelocity(const bool bInDecreaseVelocity) { bDecreaseVelocity = bInDecreaseVelocity; }
-    void Relocate(const FVector& StartingPosition);
+    void Relocate(const FVector& StartingPosition, bool bForceRelocation = false);
 
     virtual void Recharge() override;
 
@@ -118,6 +120,8 @@ protected:
 
     UFUNCTION()
     void OnRep_CurrentFuelLevel();
+    UFUNCTION()
+    void OnRep_ServerSpaceShipVelocity();
 
 public:
     UPROPERTY(BlueprintAssignable)
