@@ -40,6 +40,8 @@ public:
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) override { DestroyDecomposerAmmo = InDestroyDecomposerAmmo; OnDestroyDecomposerAmmoUpdated.Broadcast(DestroyDecomposerAmmo); }
     virtual void IncreaseAsteroidsDestroyed() override { AsteroidsDestroyed++; OnDestroyedAsteroidsCountUpdated.Broadcast(AsteroidsDestroyed); }
     virtual void IncreaseSatellitesDestroyed() override { SatellitesDestroyed++; OnDestroyedSatellitesCountUpdated.Broadcast(SatellitesDestroyed); }
+    virtual void SetAsteroidsDestroyed(int32 InAsteroidsDestroyed) override { AsteroidsDestroyed = InAsteroidsDestroyed; OnDestroyedAsteroidsCountUpdated.Broadcast(AsteroidsDestroyed); }
+    virtual void SetSatellitesDestroyed(int32 InSatellitesDestroyed) override { SatellitesDestroyed = InSatellitesDestroyed; OnDestroyedSatellitesCountUpdated.Broadcast(SatellitesDestroyed); }
     
     virtual FString GetSpaceShipName() const override { return SpaceShipName; }
     virtual float GetFuelLevel() const override { return FuelLevel; }

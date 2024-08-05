@@ -58,11 +58,11 @@ void USpaceShipMovementComponent::Rotate(const FVector2D& LookVector)
     Owner->AddActorWorldRotation(FRotator(0, LookVector.X, 0));
 }
 
-void USpaceShipMovementComponent::Relocate()
+void USpaceShipMovementComponent::Relocate(const FVector& StartingPosition)
 {
     if (CurrentFuelLevel <= 0 && (Owner->HasAuthority() || Owner->IsLocallyControlled()))
     {
-        Owner->SetActorLocation(FVector::ZeroVector);
+        Owner->SetActorLocation(StartingPosition);
         SpaceShipVelocity = FVector::ZeroVector;
     }
 }

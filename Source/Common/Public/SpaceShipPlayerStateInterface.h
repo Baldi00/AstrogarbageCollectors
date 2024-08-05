@@ -21,6 +21,8 @@ public:
     virtual void SetDestroyDecomposerAmmo(int32 InDestroyDecomposerAmmo) = 0;
     virtual void IncreaseAsteroidsDestroyed() = 0;
     virtual void IncreaseSatellitesDestroyed() = 0;
+    virtual void SetAsteroidsDestroyed(int32 InAsteroidsDestroyed) = 0;
+    virtual void SetSatellitesDestroyed(int32 InSatellitesDestroyed) = 0;
 
     virtual FString GetSpaceShipName() const = 0;
     virtual float GetFuelLevel() const = 0;

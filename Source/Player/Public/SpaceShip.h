@@ -98,6 +98,8 @@ class PLAYER_API ASpaceShip : public APawn, public IRechargeable
     float CanRechargeCooldown = 2;
     float CanRechargeTimer = 0;
 
+    FVector StartingPosition;
+
 public:
     ASpaceShip();
 
@@ -113,6 +115,8 @@ public:
     void ShootDestroyDecomposer(const FInputActionValue& Value);
     void Relocate(const FInputActionValue& Value);
 
+    void ResetState();
+
     UFUNCTION(Server, Unreliable)
     void Server_Move(FVector MovementVector);
     UFUNCTION(Server, Unreliable)
@@ -127,6 +131,8 @@ public:
     void Server_Relocate();
     UFUNCTION(Server, Reliable)
     void Server_Recharge();
+    UFUNCTION(Server, Reliable)
+    void Server_ResetState();
 
     virtual void Recharge() override;
 

@@ -15,6 +15,8 @@
 #include "NiagaraComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SpaceShipPlayerStateInterface.h"
+#include "GameFramework/PlayerState.h"
 
 ASpaceShip::ASpaceShip()
 {
@@ -111,6 +113,8 @@ void ASpaceShip::BeginPlay()
     FireRocketComponent3->SetFloatParameter("Scale", 20);
 
     ShootingComponent->SetShootingSceneComponents(LeftLaserRaySceneComponent, CentralDestroyDecomposerSceneComponent, RightLaserRaySceneComponent);
+
+    StartingPosition = GetActorLocation();
 }
 
 void ASpaceShip::Tick(float DeltaTime)
@@ -241,9 +245,29 @@ void ASpaceShip::ShootDestroyDecomposer(const FInputActionValue& Value)
 
 void ASpaceShip::Relocate(const FInputActionValue& Value)
 {
-    MovementComponent->Relocate();
+    MovementComponent->Relocate(StartingPosition);
     if (!HasAuthority())
         Server_Relocate();
+}
+
+void ASpaceShip::ResetState()
+{
+    MovementComponent->Relocate(StartingPosition);
+    MovementComponent->Recharge();
+    ShootingComponent->Recharge();
+    if (HasAuthority())
+    {
+        ISpaceShipPlayerStateInterface* SpaceShipPlayerState = Cast<ISpaceShipPlayerStateInterface>(GetPlayerState());
+        if (SpaceShipPlayerState)
+        {
+            SpaceShipPlayerState->SetAsteroidsDestroyed(0);
+            SpaceShipPlayerState->OnRep_AsteroidsDestroyed();
+            SpaceShipPlayerState->SetSatellitesDestroyed(0);
+            SpaceShipPlayerState->OnRep_SatellitesDestroyed();
+        }
+    }
+    else
+        Server_ResetState();
 }
 
 void ASpaceShip::Server_Move_Implementation(FVector MovementVector)
@@ -273,7 +297,23 @@ void ASpaceShip::Server_ShootDestroyDecomposer_Implementation(FRotator BulletRot
 
 void ASpaceShip::Server_Relocate_Implementation()
 {
-    MovementComponent->Relocate();
+    MovementComponent->Relocate(StartingPosition);
+}
+
+void ASpaceShip::Server_ResetState_Implementation()
+{
+    MovementComponent->Relocate(StartingPosition);
+    MovementComponent->Recharge();
+    ShootingComponent->Recharge();
+
+    ISpaceShipPlayerStateInterface* SpaceShipPlayerState = Cast<ISpaceShipPlayerStateInterface>(GetPlayerState());
+    if (SpaceShipPlayerState)
+    {
+        SpaceShipPlayerState->SetAsteroidsDestroyed(0);
+        SpaceShipPlayerState->OnRep_AsteroidsDestroyed();
+        SpaceShipPlayerState->SetSatellitesDestroyed(0);
+        SpaceShipPlayerState->OnRep_SatellitesDestroyed();
+    }
 }
 
 void ASpaceShip::Server_Recharge_Implementation()
