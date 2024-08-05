@@ -120,7 +120,7 @@ void USpaceShipMovementComponent::UpdateMovementEffects(float DeltaTime)
         UpdateCameraSocketOffset(DeltaTime);
 
         // Update Camera Field of View
-        SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 120.f,
+        SpaceShipCameraComponent->FieldOfView = FMath::Lerp(90.f, 110.f,
             (SpaceShipVelocity.Length() * ForwardInputSmoothedTimer / ForwardInputSmoothedMaxDuration) / MaxSpeed);
     }
 }
