@@ -136,7 +136,9 @@ void AGameLevelAudioManager::UpdateRocketVolume()
         return;
 
     float CurrentRocketPower = 0;
-    if (MovementComponent->GetForwardInputSmoothedPercentage() > 0.3f)
+    if (MovementComponent->GetCurrentFuelLevel() <= 0)
+        CurrentRocketPower = 0;
+    else if (MovementComponent->GetForwardInputSmoothedPercentage() > 0.3f)
         CurrentRocketPower = MovementComponent->GetForwardInputSmoothedPercentage();
     else if (MovementComponent->GetCurrentMovementVector() != FVector::ZeroVector ||
         (MovementComponent->ShouldDecreaseVelocity() && MovementComponent->GetSpaceShipVelocity().SquaredLength() > 25))
