@@ -73,7 +73,6 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-Content/FMOD/Desktop
 
 # Allow FMOD Plugin files
 !Plugins/FMODStudio/
