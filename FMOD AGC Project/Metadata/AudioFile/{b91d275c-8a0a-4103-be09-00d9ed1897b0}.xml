@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{b91d275c-8a0a-4103-be09-00d9ed1897b0}">
+		<property name="assetPath">
+			<value>BlackHole.WAV</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>24</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>3.0960000000000001</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{6062c572-642d-4088-a2f2-95f5dbf808a8}</destination>
+		</relationship>
+	</object>
+</objects>

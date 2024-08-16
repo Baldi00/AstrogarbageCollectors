@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{ef0842b8-c429-488a-a149-7f83e10293fc}">
+		<property name="name">
+			<value>RocketPower</value>
+		</property>
+		<relationship name="folder">
+			<destination>{8fd8dd5a-37d7-4245-986f-39db445f63e5}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{2dd58303-da4f-4190-8bd6-d0b5139b5a6d}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{2dd58303-da4f-4190-8bd6-d0b5139b5a6d}">
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
